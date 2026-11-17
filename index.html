@@ -1,0 +1,4447 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#ede4f7" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="format-detection" content="telephone=no" />
+  <title>Audio Analyzer & Hearing Test Suite | DSP Scientific Instrument</title>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Prompt', 'Inter', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+          },
+          colors: {
+            lavender: {
+              50: '#faf7fc',
+              100: '#f3eef8',
+              200: '#e8ddf2',
+              300: '#d7c2e8',
+              400: '#c09fda',
+              500: '#a77dc9',
+              600: '#8e5fb3',
+              700: '#754897',
+              800: '#5c3877',
+              900: '#422855',
+              950: '#2b1739'
+            },
+            neon: {
+              cyan: '#22d3ee',
+              emerald: '#10b981',
+              rose: '#fb7185',
+              amber: '#fbbf24',
+              violet: '#a78bfa'
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Google Fonts: Prompt (Thai/English UI) & JetBrains Mono (Scientific Readouts) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+  <style>
+    :root {
+      color-scheme: light;
+    }
+
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* Soft Lavender Theme Background (Coolors Trending Palette) */
+    body {
+      background-color: #f5f0fb;
+      background-image:
+        radial-gradient(circle at 12% 15%, rgba(167, 125, 201, 0.18) 0%, transparent 45%),
+        radial-gradient(circle at 88% 18%, rgba(192, 159, 218, 0.22) 0%, transparent 45%),
+        radial-gradient(circle at 50% 85%, rgba(215, 194, 232, 0.28) 0%, transparent 60%),
+        linear-gradient(to bottom, #f9f6fc, #ede4f7 50%, #e6d9f3);
+      min-height: 100vh;
+      min-height: 100dvh;
+      color: #2b1739;
+      padding-left: env(safe-area-inset-left, 0px);
+      padding-right: env(safe-area-inset-right, 0px);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+      overflow-x: hidden;
+    }
+
+    header.safe-top-header {
+      padding-top: env(safe-area-inset-top, 0px);
+    }
+
+    /* Soft Lavender Glassmorphism Scientific Panels */
+    .glass-panel {
+      background: rgba(255, 255, 255, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(192, 159, 218, 0.5);
+      box-shadow: 0 12px 32px -10px rgba(117, 72, 151, 0.15), inset 0 1px 0 0 rgba(255, 255, 255, 0.9);
+    }
+
+    .glass-subpanel {
+      background: rgba(246, 241, 253, 0.82);
+      border: 1px solid rgba(215, 194, 232, 0.7);
+      box-shadow: 0 4px 14px -3px rgba(117, 72, 151, 0.08);
+    }
+
+    /* Custom Range Sliders */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      background: transparent;
+      cursor: pointer;
+      touch-action: pan-y;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(200, 180, 225, 0.85);
+      border: 1px solid rgba(175, 150, 205, 0.4);
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(200, 180, 225, 0.85);
+      border: 1px solid rgba(175, 150, 205, 0.4);
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #8e5fb3;
+      box-shadow: 0 0 10px rgba(142, 95, 179, 0.75);
+      margin-top: -6px;
+      transition: transform 0.15s ease, background-color 0.15s ease;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border: none;
+      border-radius: 50%;
+      background: #8e5fb3;
+      box-shadow: 0 0 10px rgba(142, 95, 179, 0.75);
+    }
+
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+      background: #754897;
+    }
+
+    @media (pointer: coarse) {
+      input[type="range"]::-webkit-slider-thumb {
+        width: 24px;
+        height: 24px;
+        margin-top: -9px;
+      }
+      input[type="range"]::-moz-range-thumb {
+        width: 24px;
+        height: 24px;
+      }
+      .matrix-cell {
+        min-height: 34px;
+        min-width: 44px;
+        font-size: 11px !important;
+      }
+    }
+
+    /* Prevent iOS Safari auto-zoom on input focus (< 16px) */
+    @media (max-width: 640px) {
+      input[type="text"],
+      input[type="number"],
+      select {
+        font-size: 16px !important;
+      }
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(235, 225, 247, 0.7);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(175, 150, 205, 0.65);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(142, 95, 179, 0.85);
+    }
+
+    /* Matrix Grid Cell Transitions */
+    .matrix-cell {
+      transition: all 0.1s ease;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+    @media (hover: hover) {
+      .matrix-cell:hover {
+        border-color: rgba(142, 95, 179, 0.85);
+        background-color: rgba(142, 95, 179, 0.18);
+        transform: scale(1.04);
+        z-index: 10;
+      }
+    }
+    .matrix-cell.selected-cell {
+      background: linear-gradient(135deg, #754897, #10b981) !important;
+      color: #ffffff !important;
+      font-weight: 700;
+      border-color: #5c3877 !important;
+      box-shadow: 0 0 12px rgba(117, 72, 151, 0.55);
+      z-index: 15;
+    }
+    .matrix-cell.playing-cell {
+      outline: 2px solid #eab308;
+      outline-offset: 1px;
+      box-shadow: 0 0 16px rgba(234, 179, 8, 0.9) !important;
+      z-index: 20;
+    }
+
+    /* Waterfall Colorbar CSS Gradient matching LUT */
+    .spectrogram-legend-bar {
+      background: linear-gradient(
+        to right,
+        #000000 0%,
+        #003cff 22%,
+        #00dc5a 44%,
+        #ffe600 66%,
+        #ff2323 85%,
+        #ffffff 100%
+      );
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.45; }
+    }
+    .animate-live-dot {
+      animation: pulseGlow 1.4s infinite ease-in-out;
+    }
+
+    /* Fixed-Width & Tabular Monospace Digital Readouts (Anti-Layout-Shift) */
+    .tabular-readout {
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum" 1, "zero" 1;
+    }
+    .readout-card {
+      contain: layout style;
+      min-height: 78px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .readout-value-box {
+      min-height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum" 1, "zero" 1;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .readout-sub-box {
+      min-height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum" 1, "zero" 1;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+  </style>
+</head>
+
+<body class="font-sans antialiased selection:bg-purple-300 selection:text-purple-900">
+  <!-- Top Scientific Header & Navigation -->
+  <header class="safe-top-header sticky top-0 z-40 border-b border-purple-200/80 bg-white/80 backdrop-blur-xl shadow-sm">
+    <div class="max-w-[1440px] mx-auto px-3.5 sm:px-6 py-2.5 sm:py-3 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2.5">
+      <!-- Brand Identity -->
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-xl bg-gradient-to-br from-purple-600/15 to-violet-500/25 border border-purple-400/40 flex items-center justify-center shadow-[0_0_15px_rgba(142,95,179,0.25)]">
+          <svg class="w-5 h-5 sm:w-6 sm:h-6 text-purple-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 12h3l2-7 4 14 3-10 2 5h4" />
+          </svg>
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2">
+            <h1 class="text-base sm:text-xl font-bold tracking-tight bg-gradient-to-r from-purple-950 via-purple-800 to-indigo-900 bg-clip-text text-transparent truncate">
+              Audio Analyzer &amp; Hearing Test Suite
+            </h1>
+            <span class="hidden sm:inline-block text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 border border-purple-300">
+              Soft Lavender DSP
+            </span>
+          </div>
+          <p class="text-[11px] sm:text-xs text-purple-900/70 line-clamp-1 font-medium">
+            เครื่องมือวิเคราะห์สเปกตรัมเสียงเรียลไทม์ (Spectroid), เครื่องวัดความถี่มูลฐาน (f₀) และชุดทดสอบการได้ยินมาตรฐาน (UNSW Equal-Loudness)
+          </p>
+        </div>
+      </div>
+
+      <!-- Main Tab Switcher -->
+      <nav class="w-full lg:w-auto grid grid-cols-2 lg:flex items-center gap-1.5 sm:gap-2 bg-purple-100/80 p-1.5 rounded-xl border border-purple-200">
+        <button
+          id="tabBtnAnalyzer"
+          onclick="switchTab('analyzer')"
+          class="tab-btn flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-white text-purple-900 border border-purple-300 shadow-sm"
+        >
+          <span class="w-2 h-2 rounded-full bg-purple-600 shrink-0"></span>
+          <span class="truncate">Tab 1: Spectrum Analyzer &amp; Pitch (f₀)</span>
+        </button>
+
+        <button
+          id="tabBtnHearing"
+          onclick="switchTab('hearing')"
+          class="tab-btn flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-purple-700/80 hover:text-purple-950 border border-transparent"
+        >
+          <span class="w-2 h-2 rounded-full bg-emerald-500/60 shrink-0"></span>
+          <span class="truncate">Tab 2: Hearing Test</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-[1440px] mx-auto px-4 sm:px-6 py-6 space-y-6">
+    <!-- ===================================================================== -->
+    <!-- TAB 1: REAL-TIME AUDIO SPECTRUM ANALYZER & PITCH DETECTION (f₀)       -->
+    <!-- ===================================================================== -->
+    <section id="tabContentAnalyzer" class="space-y-6">
+      <!-- Top Control & Live Telemetry Bar -->
+      <div class="glass-panel rounded-2xl p-3.5 sm:p-5 space-y-4 overflow-hidden">
+        <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3.5">
+          <!-- Primary Controls -->
+          <div class="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full xl:w-auto shrink-0">
+            <button
+              id="btnMicToggle"
+              onclick="toggleMicrophone()"
+              class="flex items-center justify-center gap-2 px-3.5 sm:px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm bg-purple-700 hover:bg-purple-800 text-white shadow-[0_4px_16px_rgba(117,72,151,0.35)] transition-all"
+            >
+              <svg id="iconMicStart" class="w-4 h-4 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M7 4a3 3 0 016 0v6a3 3 0 11-6 0V4z" />
+                <path d="M5.5 9.643a.75.75 0 00-1.5 0V10c0 3.06 2.29 5.585 5.25 5.954V17.5h-1.5a.75.75 0 000 1.5h4.5a.75.75 0 000-1.5h-1.5v-1.546A6.001 6.001 0 0016 10v-.357a.75.75 0 00-1.5 0V10a4.5 4.5 0 01-9 0v-.357z" />
+              </svg>
+              <span id="btnMicLabel">Start Mic</span>
+            </button>
+
+            <button
+              id="btnPauseAnalyzer"
+              onclick="togglePauseAnalyzer()"
+              disabled
+              class="flex items-center justify-center gap-1.5 px-3 sm:px-3.5 py-2.5 rounded-xl font-medium text-xs sm:text-sm bg-purple-100 hover:bg-purple-200 disabled:opacity-40 disabled:pointer-events-none text-purple-900 border border-purple-200 transition-all"
+            >
+              <span id="btnPauseLabel">Pause Display</span>
+            </button>
+
+            <button
+              onclick="resetPeakHold()"
+              class="flex items-center justify-center gap-1.5 px-3 sm:px-3.5 py-2.5 rounded-xl font-medium text-xs sm:text-sm bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 transition-all"
+            >
+              <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+              <span>Reset Peak</span>
+            </button>
+
+            <button
+              onclick="captureSnapshotToTable()"
+              class="flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm bg-emerald-600 hover:bg-emerald-700 text-white shadow-[0_4px_14px_rgba(16,185,129,0.25)] transition-all"
+            >
+              <svg class="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <span>Capture Snapshot</span>
+            </button>
+          </div>
+
+          <!-- Real-time Digital Readout Cards (Fixed-Width, Tabular-Nums, Throttled HUD) -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 w-full xl:flex-1 xl:max-w-[780px] min-w-0">
+            <!-- Fundamental Frequency (f0) Pitch Detection -->
+            <div class="glass-subpanel readout-card rounded-xl px-3 py-2 border-l-4 border-l-emerald-500 min-w-0">
+              <div class="text-[10px] uppercase tracking-wider text-purple-900/70 font-semibold flex items-center justify-between gap-1">
+                <span class="truncate">ความถี่มูลฐาน (f₀)</span>
+                <span id="f0ConfidenceBadge" class="inline-flex items-center justify-center min-w-[58px] text-center text-[9px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-mono tabular-readout shrink-0">Pitch</span>
+              </div>
+              <div id="readoutF0Hz" class="readout-value-box text-base sm:text-lg font-mono font-bold text-emerald-700 mt-0.5 text-right w-full">
+                ---.- Hz
+              </div>
+              <div id="readoutF0Note" class="readout-sub-box text-[11px] font-mono text-emerald-800 truncate text-right w-full">
+                f₀ Note: --
+              </div>
+            </div>
+
+            <!-- Dominant Peak -->
+            <div class="glass-subpanel readout-card rounded-xl px-3 py-2 border-l-4 border-l-purple-500 min-w-0">
+              <div class="text-[10px] uppercase tracking-wider text-purple-900/70 font-semibold flex items-center justify-between gap-1">
+                <span class="truncate">Dominant Peak</span>
+                <span id="micStatusDot" class="w-2 h-2 rounded-full bg-slate-400 shrink-0"></span>
+              </div>
+              <div id="readoutPeakHz" class="readout-value-box text-base sm:text-lg font-mono font-bold text-purple-950 mt-0.5 text-right w-full">
+                ---.- Hz
+              </div>
+              <div id="readoutNote" class="readout-sub-box text-[11px] font-mono text-purple-800 truncate text-right w-full">
+                Peak Note: --
+              </div>
+            </div>
+
+            <!-- Peak Level dBFS -->
+            <div class="glass-subpanel readout-card rounded-xl px-3 py-2 border-l-4 border-l-rose-500 min-w-0">
+              <div class="text-[10px] uppercase tracking-wider text-purple-900/70 font-semibold truncate">Peak Level</div>
+              <div id="readoutPeakDb" class="readout-value-box text-base sm:text-lg font-mono font-bold text-rose-600 mt-0.5 text-right w-full">
+                ---.- dBFS
+              </div>
+              <div class="readout-sub-box text-[11px] font-mono text-slate-500 text-right w-full">0 – 100 dBFS</div>
+            </div>
+
+            <!-- Nearest Note (Pitch) -->
+            <div class="glass-subpanel readout-card rounded-xl px-3 py-2 border-l-4 border-l-amber-500 min-w-0">
+              <div class="text-[10px] uppercase tracking-wider text-purple-900/70 font-semibold text-center truncate">Pitch Target</div>
+              <div id="readoutNoteTarget" class="readout-value-box !justify-center text-base sm:text-lg font-mono font-bold text-amber-700 mt-0.5 text-center w-full">
+                --
+              </div>
+              <div id="readoutCentsDiff" class="readout-sub-box !justify-center text-[11px] font-mono text-slate-500 text-center w-full">-- cents</div>
+            </div>
+
+            <!-- Cursor Probe (Real-time FFT Tracked) -->
+            <div class="glass-subpanel readout-card rounded-xl px-3 py-2 border-l-4 border-l-indigo-500 col-span-2 sm:col-span-2 lg:col-span-1 min-w-0">
+              <div class="text-[10px] uppercase tracking-wider text-purple-900/70 font-semibold truncate">Cursor Probe</div>
+              <div id="readoutCursor" class="readout-value-box text-xs sm:text-sm font-mono font-semibold text-indigo-900 mt-0.5 text-right w-full">
+                Touch / Hover
+              </div>
+              <div id="readoutCursorSub" class="readout-sub-box text-[10px] font-mono text-indigo-600 truncate text-right w-full">ชี้เพื่อดู Hz &amp; dB</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DSP Parameters Row (Responsive across Desktop, iPad, and Mobile) -->
+        <div class="pt-3 border-t border-purple-200/80 grid grid-cols-1 md:grid-cols-3 xl:grid-cols-12 gap-3 items-center">
+          <!-- FFT Size -->
+          <div class="flex items-center justify-between gap-2 xl:col-span-2 min-w-0">
+            <label for="selectFftSize" class="text-xs font-semibold text-purple-900 whitespace-nowrap shrink-0">FFT Size:</label>
+            <select
+              id="selectFftSize"
+              onchange="updateFftSize(this.value)"
+              class="w-full flex-1 min-w-0 bg-white border border-purple-300 rounded-lg px-2.5 py-2 text-xs font-mono text-purple-950 focus:outline-none focus:border-purple-600 shadow-sm"
+            >
+              <option value="512">512 (Fast time)</option>
+              <option value="1024">1024</option>
+              <option value="2048">2048 (Balanced)</option>
+              <option value="4096" selected>4096 (High Res)</option>
+              <option value="8192">8192 (Ultra Freq)</option>
+            </select>
+          </div>
+
+          <!-- Smoothing Time Constant -->
+          <div class="flex items-center gap-2 xl:col-span-3 min-w-0 bg-purple-50/70 border border-purple-200/80 rounded-xl px-3 py-1.5">
+            <label for="sliderSmoothing" class="text-xs font-semibold text-purple-900 whitespace-nowrap flex items-center shrink-0">
+              <span>Smooth:</span>
+              <span id="labelSmoothingVal" class="inline-block min-w-[2.5rem] text-right font-mono tabular-readout text-purple-700 ml-1">0.65</span>
+            </label>
+            <input
+              id="sliderSmoothing"
+              type="range"
+              min="0"
+              max="0.95"
+              step="0.05"
+              value="0.65"
+              oninput="updateSmoothing(this.value)"
+              class="w-full flex-1 min-w-0"
+            />
+          </div>
+
+          <!-- Frequency Scale Mode -->
+          <div class="flex items-center justify-between gap-2 xl:col-span-3 min-w-0">
+            <label for="selectFreqScale" class="text-xs font-semibold text-purple-900 whitespace-nowrap shrink-0">Axis:</label>
+            <select
+              id="selectFreqScale"
+              onchange="updateFreqScale(this.value)"
+              class="w-full flex-1 min-w-0 bg-white border border-purple-300 rounded-lg px-2.5 py-2 text-xs font-mono text-purple-950 focus:outline-none focus:border-purple-600 shadow-sm"
+            >
+              <option value="log" selected>Logarithmic (20Hz-20kHz)</option>
+              <option value="linear">Linear (20Hz-20kHz)</option>
+            </select>
+          </div>
+
+          <!-- Toggle Buttons ('วัดความถี่มูลฐาน (f₀)' & 'Raw DSP') + Sample Rate Badge -->
+          <!-- Green when ON, Gray when OFF, fitted cleanly on Desktop, iPad, and Mobile -->
+          <div class="md:col-span-3 xl:col-span-4 grid grid-cols-1 sm:grid-cols-12 gap-2 items-center w-full min-w-0">
+            <!-- Fundamental Frequency (f0) Tracking Toggle Button -->
+            <div class="sm:col-span-5 flex items-center w-full min-w-0">
+              <input id="chkTrackF0" type="checkbox" checked class="sr-only" />
+              <button
+                id="btnToggleF0"
+                type="button"
+                onclick="toggleTrackF0Btn()"
+                class="w-full flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-xl font-semibold text-xs bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-700 transition-all shadow-sm select-none min-w-0"
+                title="เปิด/ปิด การวัดความถี่มูลฐาน (Fundamental Frequency f₀)"
+              >
+                <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M3 12h3l2-7 4 14 3-10 2 5h4" />
+                </svg>
+                <span class="truncate">วัดความถี่มูลฐาน (f₀)</span>
+                <span id="badgeTrackF0State" class="ml-0.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-800/90 text-emerald-50 shrink-0">ON</span>
+              </button>
+            </div>
+
+            <!-- Raw DSP Toggle Button -->
+            <div class="sm:col-span-4 flex items-center w-full min-w-0">
+              <input id="chkRawAudio" type="checkbox" checked class="sr-only" />
+              <button
+                id="btnToggleRawDsp"
+                type="button"
+                onclick="toggleRawDspBtn()"
+                class="w-full flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-xl font-semibold text-xs bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-700 transition-all shadow-sm select-none min-w-0"
+                title="ปิด Auto Gain / Noise Suppression ของเบราว์เซอร์เพื่อวัดค่าเสียงจริง"
+              >
+                <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+                </svg>
+                <span class="truncate">Raw DSP</span>
+                <span id="badgeRawDspState" class="ml-0.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-800/90 text-emerald-50 shrink-0">ON</span>
+              </button>
+            </div>
+
+            <!-- Sample Rate Info -->
+            <div class="sm:col-span-3 flex items-center justify-center sm:justify-end w-full min-w-0">
+              <span id="labelSampleRate" class="w-full sm:w-auto text-center sm:text-right px-2 py-1.5 rounded-lg bg-purple-100/80 border border-purple-200 text-[11px] font-mono tabular-readout font-semibold text-purple-900 truncate">SR: -- Hz</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mic error alert banner (hidden unless needed) -->
+        <div id="micErrorBanner" class="hidden rounded-xl bg-rose-100 border border-rose-300 px-4 py-2.5 text-xs text-rose-800"></div>
+      </div>
+
+      <!-- Dual Visualization Panel (Upper FFT 20Hz-20kHz + Lower Waterfall Spectrogram 1.5x Expanded) -->
+      <div class="glass-panel rounded-2xl p-4 sm:p-5 space-y-3">
+        <!-- Header & Legend -->
+        <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+          <div class="flex items-center gap-3 sm:gap-4">
+            <span class="font-bold text-purple-950 tracking-wide uppercase text-[11px] flex items-center gap-1.5">
+              <span class="w-2.5 h-2.5 rounded-full bg-purple-600 inline-block"></span>
+              Dual Real-time DSP Display (20Hz-20kHz)
+            </span>
+            <div class="hidden sm:flex items-center gap-3 text-[11px] text-purple-900/80 font-medium">
+              <span class="flex items-center gap-1">
+                <span class="w-3 h-0.5 bg-cyan-400 inline-block"></span> Live FFT
+              </span>
+              <span class="flex items-center gap-1">
+                <span class="w-3 h-0.5 bg-rose-500 inline-block"></span> Peak Hold
+              </span>
+              <span class="flex items-center gap-1">
+                <span class="w-2.5 h-2.5 rounded-full bg-emerald-400 inline-block"></span> ความถี่มูลฐาน (f₀)
+              </span>
+              <span class="flex items-center gap-1">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-400 inline-block"></span> Peak Max
+              </span>
+            </div>
+          </div>
+
+          <!-- Waterfall Color Heatmap Legend (0dB ถึง 100dBFS) -->
+          <div class="flex items-center gap-2 text-[11px] font-mono text-purple-900 font-semibold">
+            <span>0dB</span>
+            <div class="w-28 sm:w-36 h-2.5 rounded-full spectrogram-legend-bar border border-purple-300 shadow-inner" title="0dB ถึง 100dBFS"></div>
+            <span>100dBFS</span>
+            <span class="hidden md:inline-block text-[10px] text-purple-700 font-normal">(0dB ถึง 100dBFS)</span>
+          </div>
+        </div>
+
+        <!-- Stacked Synchronized Canvases (Dark scientific canvas interior preserved) -->
+        <div class="rounded-xl overflow-hidden border border-slate-800 bg-slate-950 shadow-md relative">
+          <!-- Upper Canvas: Real-time FFT Line Graph (20Hz-20kHz) -->
+          <div class="relative w-full h-[260px] sm:h-[300px] border-b border-slate-800/90">
+            <canvas id="fftCanvas" class="w-full h-full block cursor-crosshair"></canvas>
+            <div class="absolute top-2 right-7 pointer-events-none text-[10px] font-mono uppercase tracking-wider text-slate-400 bg-slate-950/80 px-2 py-0.5 rounded border border-slate-800">
+              Real-Time FFT (20Hz-20kHz)
+            </div>
+          </div>
+
+          <!-- Lower Canvas: Waterfall Spectrogram (1.5x Time Depth Expansion: 330px / 375px) -->
+          <div class="relative w-full h-[330px] sm:h-[375px]">
+            <canvas id="waterfallCanvas" class="w-full h-full block cursor-crosshair"></canvas>
+            <div class="absolute top-2 right-7 pointer-events-none text-[10px] font-mono uppercase tracking-wider text-slate-300 bg-slate-950/85 px-2 py-0.5 rounded border border-slate-800">
+              Waterfall Spectrogram (20Hz-20kHz • Now to Past ↓ 1.5x View)
+            </div>
+          </div>
+        </div>
+
+        <div class="text-[11px] text-purple-900/80 flex flex-wrap items-center justify-between gap-2">
+          <span>
+            💡 <strong>Smart Cursor &amp; Touch Probe:</strong> เลื่อนเมาส์หรือแตะค้างบนกราฟ FFT หรือ Waterfall เพื่ออ่านค่าความถี่และระดับความดัง ณ ตำแหน่งของเส้นกราฟ Real-Time FFT ทันที
+          </span>
+          <span class="font-mono text-purple-800">Bandwidth: 20Hz-20kHz | Range: 0dB ถึง 100dBFS</span>
+        </div>
+      </div>
+
+      <!-- Custom Graph Plotter & Data Logger Section -->
+      <div class="glass-panel rounded-2xl p-4 sm:p-6 space-y-5">
+        <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3 border-b border-purple-200 pb-4">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-purple-950 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+              Custom Graph Plotter &amp; Experiment Data Logger
+            </h2>
+            <p class="text-xs text-purple-900/70 mt-0.5">
+              บันทึกค่าความถี่มูลฐาน (f₀), ความถี่หลัก (Peak Hz) และระดับความดัง (0dB ถึง 100dBFS) พร้อมระบบคัดกรองเสียงรบกวน (Background Noise Rejection) อัตโนมัติ
+            </p>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2">
+            <button
+              onclick="loadSampleAnalyzerData()"
+              class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 transition-all"
+            >
+              โหลดข้อมูลตัวอย่าง
+            </button>
+            <button
+              onclick="exportAnalyzerCsv()"
+              class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-purple-700 hover:bg-purple-800 text-white shadow-sm transition-all"
+            >
+              ⬇ Export CSV
+            </button>
+            <button
+              onclick="downloadChartImage('analyzerCustomChart', 'spectrum-experiment-chart.png')"
+              class="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all"
+            >
+              📷 Download PNG
+            </button>
+          </div>
+        </div>
+
+        <!-- Smart Background Noise Rejection & Noise Gate Control Bar -->
+        <div class="glass-subpanel rounded-xl px-3.5 py-2.5 border border-purple-300/90 flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <span id="noiseGateStatusDot" class="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></span>
+            <div class="text-xs min-w-0">
+              <span class="font-bold text-purple-950">Smart Background Noise Filter:</span>
+              <span id="noiseGateStatusText" class="ml-1 font-medium text-emerald-800">
+                คัดกรองเฉพาะเสียงจริงจากอุปกรณ์/เครื่องดนตรี (ตัดเสียงรบกวนและเสียง Background อัตโนมัติ)
+              </span>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3 shrink-0">
+            <div class="flex items-center gap-2">
+              <label for="sliderNoiseGate" class="text-xs font-semibold text-purple-950 whitespace-nowrap">
+                Noise Gate (เกณฑ์ตัดเสียงรบกวน):
+                <span id="labelNoiseGateVal" class="inline-block min-w-[4.5rem] text-right font-mono tabular-readout font-bold text-purple-800">45 dB</span>
+              </label>
+              <input
+                id="sliderNoiseGate"
+                type="range"
+                min="20"
+                max="75"
+                step="1"
+                value="45"
+                oninput="updateNoiseGateThreshold(this.value)"
+                class="w-28 sm:w-36"
+              />
+            </div>
+            <button
+              type="button"
+              onclick="calibrateRoomNoiseFloor()"
+              class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 transition-all whitespace-nowrap"
+              title="วัดระดับเสียงรบกวนในห้องขณะเงียบเพื่อตั้งเกณฑ์ตัดเสียงรบกวนอัตโนมัติ"
+            >
+              🛡️ วัดค่าเสียงรบกวนห้องอัตโนมัติ
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+          <!-- Left Column: Unified Single Data Recording Box with Side Timer Options -->
+          <div class="lg:col-span-5">
+            <div class="glass-subpanel rounded-xl p-4 space-y-4 border border-purple-300/90 flex flex-col justify-between">
+              <!-- Top Unified Data Recording & Side Interval Selector -->
+              <div class="space-y-3">
+                <div class="flex items-center justify-between border-b border-purple-200/80 pb-2">
+                  <span class="text-xs sm:text-sm font-bold text-purple-950 flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-purple-700"></span>
+                    บันทึกข้อมูลผลการทดลอง
+                  </span>
+                  <button
+                    onclick="clearAnalyzerTable()"
+                    class="text-rose-600 hover:text-rose-800 text-[11px] font-semibold"
+                  >
+                    ล้างตารางทั้งหมด
+                  </button>
+                </div>
+
+                <!-- Unified Recording Box with Side Timer Options -->
+                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-stretch bg-white/80 rounded-xl p-3 border border-purple-200/90 shadow-sm">
+                  <!-- Left / Main Recording Controls -->
+                  <div class="sm:col-span-7 flex flex-col justify-between space-y-2">
+                    <div class="flex items-center justify-between gap-1">
+                      <span class="text-xs font-bold text-purple-950">บันทึกข้อมูลผลการทดลอง</span>
+                      <button
+                        type="button"
+                        onclick="captureSnapshotToTable()"
+                        class="text-[11px] text-emerald-700 hover:text-emerald-900 underline font-bold"
+                      >
+                        + ดึงค่าสดทันที
+                      </button>
+                    </div>
+                    <input
+                      id="inputSampleLabel"
+                      type="text"
+                      placeholder="ชื่อการทดลอง (เช่น กีตาร์ A4)"
+                      class="w-full bg-white border border-purple-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-purple-600"
+                    />
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-1.5">
+                      <input
+                        id="inputSampleF0"
+                        type="number"
+                        step="0.1"
+                        min="1"
+                        max="24000"
+                        placeholder="ความถี่มูลฐาน (Hz)"
+                        title="ความถี่มูลฐาน f₀ (Hz)"
+                        class="w-full bg-white border border-emerald-400 rounded-lg px-2 py-1.5 text-xs font-mono text-slate-800 focus:outline-none focus:border-emerald-600"
+                      />
+                      <input
+                        id="inputSampleHz"
+                        type="number"
+                        step="0.1"
+                        min="1"
+                        max="24000"
+                        placeholder="ความถี่ (Hz)"
+                        title="ความถี่หลัก Peak (Hz)"
+                        class="w-full bg-white border border-purple-300 rounded-lg px-2 py-1.5 text-xs font-mono text-slate-800 focus:outline-none focus:border-purple-600"
+                      />
+                      <input
+                        id="inputSampleDb"
+                        type="number"
+                        step="0.1"
+                        min="0"
+                        max="100"
+                        placeholder="ความดัง (dB)"
+                        title="ความดัง (0-100 dB)"
+                        class="w-full bg-white border border-purple-300 rounded-lg px-2 py-1.5 text-xs font-mono text-slate-800 focus:outline-none focus:border-purple-600"
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onclick="addManualAnalyzerRow()"
+                      class="w-full py-2 rounded-lg text-xs font-bold bg-purple-700 hover:bg-purple-800 text-white shadow-sm transition-all"
+                    >
+                      + เพิ่มลงตารางและพล็อตกราฟ
+                    </button>
+                  </div>
+
+                  <!-- Side Options: Auto-Plot Timer Interval Selector (0.5s, 1s, 2s) -->
+                  <div class="sm:col-span-5 flex flex-col justify-between bg-purple-100/75 rounded-xl p-2.5 border border-purple-200 space-y-1.5">
+                    <div class="text-[11px] font-bold text-purple-950 text-center pb-0.5 border-b border-purple-200/80">
+                      ⏱ จับเวลาบันทึกข้อมูล
+                    </div>
+                    <button
+                      id="btnAutoPlot05"
+                      type="button"
+                      onclick="setAutoPlotInterval(0.5)"
+                      class="w-full px-2.5 py-2 rounded-lg text-[11px] font-bold bg-white hover:bg-purple-50 text-purple-900 border border-purple-300 shadow-sm transition-all text-center leading-tight"
+                    >
+                      Plot geaph ทุก 0.5 วินาที
+                    </button>
+                    <button
+                      id="btnAutoPlot1"
+                      type="button"
+                      onclick="setAutoPlotInterval(1)"
+                      class="w-full px-2.5 py-2 rounded-lg text-[11px] font-bold bg-white hover:bg-purple-50 text-purple-900 border border-purple-300 shadow-sm transition-all text-center leading-tight"
+                    >
+                      Plot geaph ทุก 1 วินาที
+                    </button>
+                    <button
+                      id="btnAutoPlot2"
+                      type="button"
+                      onclick="setAutoPlotInterval(2)"
+                      class="w-full px-2.5 py-2 rounded-lg text-[11px] font-bold bg-white hover:bg-purple-50 text-purple-900 border border-purple-300 shadow-sm transition-all text-center leading-tight"
+                    >
+                      Plot geaph ทุก 2 วินาที
+                    </button>
+                    <button
+                      id="btnAutoRecord"
+                      type="button"
+                      onclick="setAutoPlotInterval(0)"
+                      disabled
+                      class="w-full px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-slate-200 text-slate-400 border border-slate-300 disabled:opacity-60 disabled:pointer-events-none transition-all text-center"
+                      title="หยุดการพล็อตอัตโนมัติ"
+                    >
+                      ■ หยุดพล็อตอัตโนมัติ
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Recorded Data Table inside the same unified box (Fixed Height so table never resizes during plotting) -->
+              <div class="rounded-xl overflow-hidden border border-purple-200/90 bg-white/80">
+                <div class="px-3.5 py-2 border-b border-purple-200/80 flex items-center justify-between text-xs bg-purple-100/60">
+                  <span class="font-bold text-purple-950">
+                    ตารางข้อมูลที่บันทึก (<span id="analyzerRowCount" class="font-mono text-purple-800">0</span> รายการ)
+                  </span>
+                  <span id="autoPlotActiveStatus" class="text-[11px] font-mono font-semibold text-purple-700">โหมด: บันทึกด้วยตนเอง</span>
+                </div>
+                <div class="h-[230px] min-h-[230px] max-h-[230px] overflow-y-auto">
+                  <table class="w-full table-fixed text-left text-xs">
+                    <thead class="bg-purple-100/70 text-purple-900 sticky top-0 z-10 font-mono text-[11px]">
+                      <tr>
+                        <th class="py-2 px-2.5 w-9">#</th>
+                        <th class="py-2 px-2">Label / Time</th>
+                        <th class="py-2 px-2 text-right w-20">f₀ (Hz)</th>
+                        <th class="py-2 px-2 text-right w-20">Peak (Hz)</th>
+                        <th class="py-2 px-2 text-right w-20">Level (dB)</th>
+                        <th class="py-2 px-1.5 text-center w-10">ลบ</th>
+                      </tr>
+                    </thead>
+                    <tbody id="analyzerTableBody" class="divide-y divide-purple-200/60 font-mono bg-white/70">
+                      <tr>
+                        <td colspan="6" class="h-[190px] text-center align-middle text-purple-900/60 font-sans">
+                          ยังไม่มีข้อมูล กดปุ่ม <span class="text-purple-700 font-semibold">"Capture Snapshot"</span> หรือเลือกจับเวลาด้านบน
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Interactive Chart.js Plotter (Fixed Size Container so chart never resizes during plotting) -->
+          <div class="lg:col-span-7 glass-subpanel rounded-xl p-4 flex flex-col justify-between space-y-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <label for="selectAnalyzerChartMode" class="text-xs font-bold text-purple-950">
+                รูปแบบกราฟเปรียบเทียบ (Chart Mode):
+              </label>
+              <select
+                id="selectAnalyzerChartMode"
+                onchange="updateAnalyzerCustomChart(true)"
+                class="bg-white border border-purple-300 rounded-lg px-3 py-1.5 text-xs text-purple-950 font-medium focus:outline-none focus:border-purple-600 shadow-sm"
+              >
+                <option value="line_freq">กราฟเส้น: การเปลี่ยนแปลงความถี่หลักและ f₀ ตามเวลา (Hz vs Sample)</option>
+                <option value="bar_db">กราฟแท่ง: เปรียบเทียบระดับความดังในแต่ละการทดลอง (dB Comparison)</option>
+                <option value="bar_freq">กราฟแท่ง: เปรียบเทียบความถี่ในแต่ละการทดลอง (Hz Comparison)</option>
+                <option value="line_dual">กราฟเส้นคู่: เปรียบเทียบทั้งความถี่ (Hz) และความดัง (dB)</option>
+                <option value="scatter_freq_db">กราฟจุด XY: ความถี่ (Hz) เทียบกับความดัง (dB)</option>
+              </select>
+            </div>
+
+            <div class="relative w-full h-[380px] min-h-[380px] max-h-[380px] bg-white rounded-xl p-2 border border-purple-200 shadow-inner overflow-hidden">
+              <canvas id="analyzerCustomChart" class="w-full h-full block"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================== -->
+    <!-- TAB 2: INTERACTIVE HEARING TEST & EQUAL-LOUDNESS CONTOUR (UNSW)       -->
+    <!-- ===================================================================== -->
+    <section id="tabContentHearing" class="hidden space-y-6">
+      <!-- Step 1: Safety Calibration Panel -->
+      <div class="glass-panel rounded-2xl p-4 sm:p-6 border-l-4 border-l-amber-500 space-y-4">
+        <!-- Top Box: ปรับเทียบความดังปลอดภัยที่ 1 kHz ก่อนเริ่มทดสอบ (Larger Font, Clean Line Formatting, Placed Above Master Calibration Ceiling) -->
+        <div class="rounded-xl bg-amber-50/75 border border-amber-200/90 p-4 sm:p-5 space-y-3 shadow-sm">
+          <div class="flex flex-wrap items-center gap-2.5 border-b border-amber-200/80 pb-2.5">
+            <span class="px-2.5 py-1 rounded-md bg-amber-200/90 text-amber-950 border border-amber-400 font-mono text-xs sm:text-sm font-bold shrink-0">
+              STEP 1: SAFETY CALIBRATION
+            </span>
+            <h2 class="text-lg sm:text-xl md:text-2xl font-extrabold text-purple-950 tracking-tight">
+              ปรับเทียบความดังปลอดภัยที่ 1 kHz ก่อนเริ่มทดสอบ
+            </h2>
+          </div>
+
+          <div class="space-y-2.5 text-sm sm:text-base md:text-[17px] text-purple-950/90 leading-relaxed font-medium">
+            <p class="flex items-start gap-2.5">
+              <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-500 text-white font-mono text-xs sm:text-sm font-bold shrink-0 mt-0.5">1</span>
+              <span>
+                สวมหูฟังในที่เงียบ เริ่มจากตั้งความดังเครื่องคอมพิวเตอร์ไว้ระดับต่ำ-กลาง แล้วกดปุ่ม
+                <span class="text-amber-800 font-extrabold">"เล่นเสียงเทียบ 1 kHz (70 dB)"</span>
+              </span>
+            </p>
+            <p class="flex items-start gap-2.5">
+              <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-500 text-white font-mono text-xs sm:text-sm font-bold shrink-0 mt-0.5">2</span>
+              <span>
+                ปรับแถบ <strong class="text-purple-950 font-extrabold">Master Calibration Volume</strong> ด้านล่างให้เสียง 1 kHz อยู่ในระดับที่ได้ยินชัดเจนและสบายหู (ไม่ดังเกินไปแม้ที่ระดับสูงสุด 90 dB / 0 dB Ceiling)
+              </span>
+            </p>
+            <p class="flex items-start gap-2.5">
+              <span class="inline-flex items-center justify-center w-6 h-6 rounded-full bg-amber-500 text-white font-mono text-xs sm:text-sm font-bold shrink-0 mt-0.5">3</span>
+              <span>
+                เลือกจุดในแต่ละคอลัมน์ความถี่ที่ <strong class="text-purple-950 font-extrabold">"เริ่มได้ยินเสียงเบาที่สุด"</strong> (Threshold of Hearing) หรือ <strong class="text-purple-950 font-extrabold">"ดังเท่ากับเสียงอ้างอิง 1 kHz"</strong> (Equal-Loudness Contour ช่วง <strong class="text-emerald-800 font-mono">0dB ถึง 90dB</strong>)
+              </span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Bottom Box: Master Calibration Ceiling (0 dB Level) & Ear Channel Controls -->
+        <div class="glass-subpanel rounded-xl p-4 sm:p-5 space-y-4">
+          <!-- Master Calibration Slider -->
+          <div class="space-y-1.5">
+            <div class="flex items-center justify-between text-xs sm:text-sm">
+              <span class="font-bold text-purple-950">Master Calibration Ceiling (0 dB Level):</span>
+              <span id="labelCalibVol" class="inline-block min-w-[3.5rem] text-right font-mono tabular-readout font-bold text-sm sm:text-base text-amber-800">20%</span>
+            </div>
+            <input
+              id="sliderCalibVol"
+              type="range"
+              min="1"
+              max="100"
+              step="1"
+              value="20"
+              oninput="updateCalibrationVolume(this.value)"
+              class="w-full"
+            />
+          </div>
+
+          <!-- Prominent Ear Channel Routing Selector & Calibration Tone Buttons -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-center">
+            <div class="lg:col-span-8 rounded-xl bg-gradient-to-r from-purple-100/90 via-white to-indigo-100/80 border-2 border-purple-300/90 p-3 space-y-2.5 shadow-sm">
+              <div class="flex items-center justify-between gap-2">
+                <label for="selectEarChannel" class="text-sm sm:text-base font-extrabold text-purple-950 tracking-tight flex items-center gap-2">
+                  <span class="w-7 h-7 rounded-lg bg-purple-700 text-white flex items-center justify-center shadow-sm shrink-0">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4a8 8 0 00-8 8v5a3 3 0 003 3h1a1 1 0 001-1v-4a1 1 0 00-1-1H6v-2a6 6 0 1112 0v2h-2a1 1 0 00-1 1v4a1 1 0 001 1h1a3 3 0 003-3v-5a8 8 0 00-8-8z" />
+                    </svg>
+                  </span>
+                  <span>ช่องหูฟัง (Ear Channel):</span>
+                </label>
+                <span
+                  id="earChannelActiveBadge"
+                  class="px-2.5 py-0.5 rounded-full text-xs font-mono font-extrabold bg-purple-700 text-white shadow-sm"
+                >
+                  สองข้าง (Both L+R)
+                </span>
+              </div>
+
+              <!-- Synced hidden select for compatibility -->
+              <select
+                id="selectEarChannel"
+                onchange="updateEarPanning(this.value)"
+                class="sr-only"
+              >
+                <option value="0" selected>สองข้าง (Both L+R)</option>
+                <option value="-1">หูซ้าย (Left Only)</option>
+                <option value="1">หูขวา (Right Only)</option>
+              </select>
+
+              <!-- High-Contrast 3-Button Ear Selector -->
+              <div class="grid grid-cols-3 gap-2">
+                <button
+                  id="btnEarLeft"
+                  type="button"
+                  onclick="updateEarPanning(-1)"
+                  class="ear-chan-btn flex flex-col items-center justify-center py-2 px-2 rounded-xl border-2 text-xs sm:text-sm font-extrabold transition-all bg-white hover:bg-purple-50 text-purple-900 border-purple-300 shadow-sm active:scale-95"
+                >
+                  <span>◀ หูซ้าย (L)</span>
+                  <span class="text-[10px] font-mono font-semibold opacity-80">Left Only</span>
+                </button>
+
+                <button
+                  id="btnEarBoth"
+                  type="button"
+                  onclick="updateEarPanning(0)"
+                  class="ear-chan-btn flex flex-col items-center justify-center py-2 px-2 rounded-xl border-2 text-xs sm:text-sm font-extrabold transition-all bg-purple-700 text-white border-purple-900 shadow-[0_4px_14px_rgba(117,72,151,0.4)] ring-2 ring-purple-300 active:scale-95"
+                >
+                  <span>🎧 สองข้าง (L+R)</span>
+                  <span class="text-[10px] font-mono font-semibold opacity-90">Both Ears</span>
+                </button>
+
+                <button
+                  id="btnEarRight"
+                  type="button"
+                  onclick="updateEarPanning(1)"
+                  class="ear-chan-btn flex flex-col items-center justify-center py-2 px-2 rounded-xl border-2 text-xs sm:text-sm font-extrabold transition-all bg-white hover:bg-purple-50 text-purple-900 border-purple-300 shadow-sm active:scale-95"
+                >
+                  <span>หูขวา (R) ▶</span>
+                  <span class="text-[10px] font-mono font-semibold opacity-80">Right Only</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Calibration Tone Playback Buttons -->
+            <div class="lg:col-span-4 flex flex-wrap lg:flex-col items-stretch justify-end gap-2">
+              <button
+                id="btnCalibTone"
+                onclick="toggleCalibrationTone()"
+                class="flex-1 px-4 py-3 rounded-xl text-xs sm:text-sm font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-sm transition-all"
+              >
+                ▶ เล่นเสียงเทียบ 1 kHz (70 dB)
+              </button>
+              <button
+                onclick="stopHearingTone()"
+                class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-300 transition-all"
+                title="หยุดเสียงทันที (Spacebar)"
+              >
+                ■ Stop
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step 2: 2D Frequency-Level Matrix Grid (UNSW Standard) -->
+      <div class="glass-panel rounded-2xl p-4 sm:p-5 space-y-4">
+        <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-purple-950 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-purple-700"></span>
+              2D Frequency–Level Matrix Grid (UNSW Standard: 30 Hz – 16 kHz | 0dB ถึง 90dB)
+            </h2>
+            <p class="text-xs text-purple-900/70 mt-0.5">
+              คลิกช่องในตาราง (ช่วงความดัง 0dB ถึง 90dB) เพื่อฟังเสียง Sine บริสุทธิ์ (มีระบบ Smooth Envelope ป้องกันเสียงคลิก) และไฮไลท์ค่าระดับเสียงของแต่ละความถี่
+            </p>
+          </div>
+
+          <!-- Tone & Interaction Controls -->
+          <div class="flex flex-wrap items-center gap-2.5">
+            <!-- Live Tone Indicator -->
+            <div class="glass-subpanel rounded-lg px-3 py-1.5 text-xs font-mono tabular-readout flex items-center gap-2 min-w-[215px]">
+              <span id="toneActiveDot" class="w-2 h-2 rounded-full bg-slate-400 shrink-0"></span>
+              <span id="toneStatusText" class="text-purple-900 font-semibold truncate">Tone: Silent</span>
+            </div>
+
+            <!-- Playback Duration Mode -->
+            <select
+              id="selectToneDurationMode"
+              class="bg-white border border-purple-300 rounded-lg px-2.5 py-1.5 text-xs text-purple-900 font-medium focus:outline-none focus:border-purple-600 shadow-sm"
+            >
+              <option value="pulse" selected>โหมดเสียง: Pulse 0.9 วินาที</option>
+              <option value="sustain">โหมดเสียง: เล่นค้างต่อเนื่อง (Sustain)</option>
+              <option value="hold">โหมดเสียง: กดค้างเพื่อฟัง (Hold)</option>
+            </select>
+
+            <!-- Selection Behavior -->
+            <select
+              id="selectGridClickMode"
+              class="bg-white border border-purple-300 rounded-lg px-2.5 py-1.5 text-xs text-purple-900 font-medium focus:outline-none focus:border-purple-600 shadow-sm"
+            >
+              <option value="play_and_mark" selected>คลิก = ฟังเสียง + ปักหมุดกราฟ</option>
+              <option value="play_only">คลิก = ฟังอย่างเดียว (ดับเบิลคลิกปักหมุด)</option>
+            </select>
+
+            <!-- Quick 1kHz Reference Button for Equal-Loudness Matching -->
+            <button
+              onclick="playReference1kHz()"
+              class="px-3 py-1.5 rounded-lg text-xs font-bold bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 transition-all"
+              title="กดเพื่อฟังเสียงอ้างอิงที่คอลัมน์ 1 kHz สลับเทียบความดัง"
+            >
+              🔊 เทียบเสียงอ้างอิง 1 kHz
+            </button>
+
+            <button
+              onclick="scrollMatrixToFreq(1000)"
+              class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white hover:bg-purple-50 text-purple-800 border border-purple-300 transition-all"
+              title="เลื่อนตารางไปยังคอลัมน์ 1 kHz"
+            >
+              🎯 เลื่อนไป 1 kHz ★
+            </button>
+
+            <button
+              onclick="clearCurrentHearingSelection()"
+              class="px-3 py-1.5 rounded-lg text-xs font-bold bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-300 transition-all"
+            >
+              ล้างจุดปัจจุบัน
+            </button>
+          </div>
+        </div>
+
+        <!-- Mobile & Touch Quick-Step Controller (One-Handed Smartphone Ergonomics) -->
+        <div class="glass-subpanel rounded-xl p-3 sm:p-4 border border-purple-300 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded bg-purple-200 text-purple-900 border border-purple-300 font-mono text-[10px] font-bold">
+                MOBILE QUICK-PAD
+              </span>
+              <span class="text-xs font-bold text-purple-950">
+                แผงควบคุมปุ่มใหญ่สำหรับมือถือ / ทัชสกรีน (ซิงค์กับตาราง 2D อัตโนมัติ • 0dB ถึง 90dB)
+              </span>
+            </div>
+            <span id="mobileQuickPinStatus" class="inline-block min-w-[195px] text-right text-[11px] font-mono tabular-readout text-purple-700 font-semibold">
+              1000 Hz: ยังไม่ได้ปักหมุด
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
+            <!-- Frequency Selector Stepper -->
+            <div class="md:col-span-5 flex items-center gap-1.5">
+              <button
+                onclick="stepMobileFreq(-1)"
+                class="px-3 py-2.5 rounded-xl bg-white hover:bg-purple-100 active:scale-95 text-purple-900 border border-purple-300 text-xs font-bold shrink-0 shadow-sm"
+              >
+                ◀ Freq
+              </button>
+              <select
+                id="selectMobileQuickFreq"
+                onchange="setMobileQuickFreq(this.value)"
+                class="w-full bg-white border border-purple-300 rounded-xl px-3 py-2 text-xs font-mono tabular-readout font-bold text-purple-900 text-center focus:outline-none focus:border-purple-600 shadow-sm"
+              >
+                <!-- Populated dynamically with 19 UNSW frequencies -->
+              </select>
+              <button
+                onclick="stepMobileFreq(1)"
+                class="px-3 py-2.5 rounded-xl bg-white hover:bg-purple-100 active:scale-95 text-purple-900 border border-purple-300 text-xs font-bold shrink-0 shadow-sm"
+              >
+                Freq ▶
+              </button>
+            </div>
+
+            <!-- Level dB Stepper (0dB ถึง 90dB) -->
+            <div class="md:col-span-4 flex items-center gap-1.5">
+              <button
+                onclick="stepMobileDb(-5)"
+                class="px-3 py-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 active:scale-95 text-emerald-800 border border-emerald-300 text-xs font-mono font-bold shrink-0 shadow-sm"
+                title="ลดความดังลง 5 dB (เบาลง)"
+              >
+                🔉 -5 dB
+              </button>
+              <div
+                id="displayMobileQuickDb"
+                class="flex-1 min-w-[76px] bg-white border border-purple-300 rounded-xl py-2 px-2 text-center font-mono tabular-readout text-sm font-bold text-purple-950 shadow-inner"
+              >
+                60 dB
+              </div>
+              <button
+                onclick="stepMobileDb(5)"
+                class="px-3 py-2.5 rounded-xl bg-amber-50 hover:bg-amber-100 active:scale-95 text-amber-800 border border-amber-300 text-xs font-mono font-bold shrink-0 shadow-sm"
+                title="เพิ่มความดังขึ้น 5 dB (ดังขึ้น)"
+              >
+                🔊 +5 dB
+              </button>
+            </div>
+
+            <!-- Play & Pin Action Buttons -->
+            <div class="md:col-span-3 grid grid-cols-2 gap-1.5">
+              <button
+                onclick="playMobileQuickTone()"
+                class="py-2.5 px-3 rounded-xl font-bold text-xs bg-purple-700 hover:bg-purple-800 active:scale-95 text-white shadow-sm transition-all"
+              >
+                ▶ ฟังเสียง
+              </button>
+              <button
+                onclick="pinMobileQuickPoint()"
+                class="py-2.5 px-3 rounded-xl font-bold text-xs bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white shadow-sm transition-all"
+              >
+                📌 ปักหมุดจุดนี้
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scrollable 19x19 Interactive Matrix Container -->
+        <div id="unswGridScrollWrapper" class="overflow-x-auto rounded-xl border border-purple-300 bg-white/90 p-2 sm:p-3 scroll-smooth shadow-inner">
+          <div id="unswGridContainer" class="min-w-[980px]">
+            <!-- Populated dynamically by JS -->
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-purple-900/80 font-medium">
+          <span>
+            💡 <strong>Tip:</strong> คอลัมน์ <span class="text-purple-800 font-mono font-bold">1k Hz ★</span> คือความถี่อ้างอิงมาตรฐาน คลิกซ้ำบนจุดที่เลือกไว้เพื่อยกเลิกจุด หรือกดปุ่ม <kbd class="px-1.5 py-0.5 bg-purple-100 rounded border border-purple-300 font-mono text-purple-900">Spacebar</kbd> เพื่อหยุดเสียงทันที
+          </span>
+          <span id="selectedCountLabel" class="font-mono text-emerald-700 font-bold">เลือกแล้ว: 0 / 19 ความถี่</span>
+        </div>
+      </div>
+
+      <!-- Step 3: Custom Hearing Curve Plotter (Equal-Loudness / Audiogram) - WHITE GRAPH WITH BLACK FONTS -->
+      <div class="glass-panel rounded-2xl p-4 sm:p-6 space-y-5">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 border-b border-purple-200 pb-4">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-purple-950 flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-purple-700"></span>
+              Equal-Loudness Contour &amp; Audiogram Curve Plotter (0dB ถึง 90dB)
+            </h2>
+            <p class="text-xs text-purple-900/70 mt-0.5">
+              กราฟพล็อตระดับการได้ยินอัตโนมัติจากจุดที่เลือกในตาราง (0dB ถึง 90dB • แสดงผลสีกราฟสีขาวและฟอนต์ตัวหนังสือสีดำตามหลักรายงานทางการแพทย์)
+            </p>
+          </div>
+
+          <!-- Save Curve & Export Controls -->
+          <div class="flex flex-wrap items-center gap-2">
+            <input
+              id="inputCurveName"
+              type="text"
+              placeholder="ชื่อเส้นกราฟ (เช่น หูซ้าย, หูฟัง A)"
+              class="bg-white border border-purple-300 rounded-lg px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-purple-600 w-48 shadow-sm font-medium"
+            />
+            <button
+              onclick="saveCurrentHearingCurve()"
+              class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-purple-700 hover:bg-purple-800 text-white shadow-sm transition-all"
+            >
+              💾 Save Curve
+            </button>
+            <button
+              onclick="clearAllHearingCurves()"
+              class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-rose-100 hover:bg-rose-200 text-rose-800 border border-rose-300 transition-all"
+            >
+              ล้างกราฟทั้งหมด
+            </button>
+            <button
+              onclick="exportHearingCsv()"
+              class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-300 transition-all"
+            >
+              ⬇ Export CSV
+            </button>
+            <button
+              onclick="downloadChartImage('hearingCurveChart', 'equal-loudness-contour.png')"
+              class="px-3.5 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all"
+            >
+              📷 ดาวน์โหลดรูปกราฟ (พื้นขาว)
+            </button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Main Equal-Loudness Chart (White Background + Black Font Text) -->
+          <div class="lg:col-span-9 bg-white rounded-2xl p-4 sm:p-5 border-2 border-purple-200/90 shadow-md space-y-3">
+            <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+              <span class="font-bold text-black tracking-tight">
+                Frequency Response / Equal-Loudness Contour (X: Log Frequency Hz, Y: Sound Level 0dB ถึง 90dB)
+              </span>
+              <label class="flex items-center gap-2 cursor-pointer text-slate-800 font-medium select-none">
+                <input
+                  id="chkShowIsoRef"
+                  type="checkbox"
+                  onchange="updateHearingChart()"
+                  class="rounded bg-white border-slate-400 text-purple-700 focus:ring-purple-400"
+                />
+                <span>แสดงเส้นแนวโน้มอ้างอิง (Typical Fletcher-Munson Trend)</span>
+              </label>
+            </div>
+
+            <!-- White Chart Container with Black Font Labels -->
+            <div class="relative w-full h-[400px] bg-white rounded-xl p-2 border border-slate-200">
+              <canvas id="hearingCurveChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Saved Curves List -->
+          <div class="lg:col-span-3 glass-subpanel rounded-xl p-4 flex flex-col justify-between space-y-4">
+            <div class="space-y-3">
+              <div class="text-xs font-bold text-purple-950 border-b border-purple-200 pb-2 flex items-center justify-between">
+                <span>เส้นกราฟที่บันทึกไว้ (Saved Curves)</span>
+                <span id="savedCurvesCount" class="font-mono text-purple-800">0</span>
+              </div>
+
+              <div id="savedCurvesList" class="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+                <p class="text-xs text-purple-900/60 py-6 text-center">
+                  ยังไม่มีเส้นกราฟที่บันทึก<br />เลือกจุดในตารางแล้วกด <strong>"Save Curve"</strong> เพื่อเทียบหลายการทดลอง
+                </p>
+              </div>
+            </div>
+
+            <div class="rounded-xl bg-purple-100/70 border border-purple-200 p-3 text-[11px] text-purple-900/90 leading-relaxed shadow-sm">
+              <strong class="text-purple-950">แนวทางการวิเคราะห์ผล:</strong><br />
+              หูมนุษย์ไวต่อย่าน <span class="text-purple-900 font-mono font-bold">2 kHz – 5 kHz</span> มากที่สุด (กราฟมักบุ๋มลงต่ำสุดบริเวณนี้) และต้องใช้ระดับเสียงสูงขึ้นมากในย่านความถี่ต่ำ (<span class="text-purple-900 font-mono font-bold">&lt;100 Hz</span>) และความถี่สูงจัด (<span class="text-purple-900 font-mono font-bold">&gt;12 kHz</span>)
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="max-w-[1440px] mx-auto px-4 sm:px-6 py-6 text-center text-xs text-purple-900/70 border-t border-purple-200/80 mt-8">
+    Audio Analyzer &amp; Hearing Test Suite • Built with HTML5 Canvas, Web Audio API &amp; Chart.js • Soft Lavender Edition
+  </footer>
+
+  <!-- ======================================================================= -->
+  <!-- CORE DSP, VISUALIZATION & INTERACTIVE APPLICATION SCRIPT                -->
+  <!-- ======================================================================= -->
+  <script>
+    // =========================================================================
+    // 1. GLOBAL CONSTANTS & SHARED AUDIO CONTEXT
+    // =========================================================================
+    // Frequency range set from 20 Hz to 20 kHz as requested
+    const MIN_FREQ = 20;
+    const MAX_FREQ = 20000;
+    const RAW_MIN_DB = -100;
+    const RAW_MAX_DB = 0;
+    const MIN_DB = 0;
+    const MAX_DB = 100;
+
+    // Exact 19 UNSW Hearing Test Standard Frequencies (Hz)
+    const UNSW_FREQUENCIES = [
+      30, 45, 60, 90, 125, 180, 250, 375, 500, 750,
+      1000, 1500, 2000, 3000, 4000, 6000, 8000, 12000, 16000
+    ];
+
+    // Relative Level Steps (90 dB down to 0 dB in 5 dB steps -> 0dB ถึง 90dB)
+    const ATTENUATION_STEPS = [];
+    for (let db = 90; db >= 0; db -= 5) {
+      ATTENUATION_STEPS.push(db);
+    }
+
+    const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+    // High contrast palette for curves on white/light backgrounds
+    const CURVE_PALETTE = [
+      '#7c3aed', // Deep Violet
+      '#059669', // Emerald
+      '#dc2626', // Red
+      '#d97706', // Amber
+      '#0284c7', // Sky Blue
+      '#db2777', // Magenta
+      '#475569'  // Slate
+    ];
+
+    // Chart.js background color plugin (White background for Hearing Chart, dark for analyzer chart export)
+    const chartBackgroundPlugin = {
+      id: 'customCanvasBackgroundColor',
+      beforeDraw: (chart) => {
+        const { ctx, canvas } = chart;
+        ctx.save();
+        ctx.globalCompositeOperation = 'destination-over';
+        if (canvas.id === 'hearingCurveChart') {
+          ctx.fillStyle = '#ffffff';
+        } else {
+          ctx.fillStyle = '#ffffff';
+        }
+        ctx.fillRect(0, 0, chart.width, chart.height);
+        ctx.restore();
+      }
+    };
+    Chart.register(chartBackgroundPlugin);
+
+    // Tab Navigation (with strict Web Audio resource cleanup on mode switch)
+    function switchTab(tab) {
+      const secAnalyzer = document.getElementById('tabContentAnalyzer');
+      const secHearing = document.getElementById('tabContentHearing');
+      const btnAnalyzer = document.getElementById('tabBtnAnalyzer');
+      const btnHearing = document.getElementById('tabBtnHearing');
+
+      const activeClasses = ['bg-white', 'text-purple-900', 'border-purple-300', 'shadow-sm'];
+      const inactiveClasses = ['text-purple-700/80', 'hover:text-purple-950', 'border-transparent'];
+
+      if (tab === 'analyzer') {
+        // Disconnect and close Hearing Test AudioContext when switching back to Analyzer
+        cleanupHearingAudio();
+        secAnalyzer.classList.remove('hidden');
+        secHearing.classList.add('hidden');
+
+        btnAnalyzer.classList.add(...activeClasses);
+        btnAnalyzer.classList.remove(...inactiveClasses);
+        btnHearing.classList.remove(...activeClasses);
+        btnHearing.classList.add(...inactiveClasses);
+
+        requestAnimationFrame(() => {
+          resizeAnalyzerCanvases();
+          drawStaticAnalyzerFrames();
+          if (analyzerCustomChartInstance) analyzerCustomChartInstance.resize();
+        });
+      } else {
+        // Disconnect and close Microphone & Analyzer AudioContext when switching to Hearing Test
+        if (analyzerState.isMicActive || analyzerState.audioCtx) {
+          stopMicrophone();
+        }
+        secAnalyzer.classList.add('hidden');
+        secHearing.classList.remove('hidden');
+
+        btnHearing.classList.add(...activeClasses);
+        btnHearing.classList.remove(...inactiveClasses);
+        btnAnalyzer.classList.remove(...activeClasses);
+        btnAnalyzer.classList.add(...inactiveClasses);
+
+        requestAnimationFrame(() => {
+          if (hearingChartInstance) hearingChartInstance.resize();
+        });
+      }
+    }
+
+    // =========================================================================
+    // 2. TAB 1: REAL-TIME SPECTRUM ANALYZER, PITCH (f₀) & WATERFALL
+    // =========================================================================
+    // Pre-allocated Reusable TypedArray Memory Pool (Prevents GC Spikes in RAF Loop)
+    const MAX_FFT_SIZE = 8192;
+    const MAX_BIN_COUNT = MAX_FFT_SIZE >>> 1;
+    const sharedFloatFreqPool = new Float32Array(MAX_BIN_COUNT);
+    const sharedByteFreqPool = new Uint8Array(MAX_BIN_COUNT);
+    const sharedFloatTimePool = new Float32Array(MAX_FFT_SIZE);
+    const sharedPeakHoldPool = new Float32Array(MAX_BIN_COUNT).fill(0);
+    const sharedAutocorrPool = new Float32Array((MAX_FFT_SIZE >>> 1) + 4);
+    const sharedPrefixSqPool = new Float32Array(MAX_FFT_SIZE + 2);
+
+    // Pre-allocated Reusable Output Structs (Zero Object Allocation inside RAF)
+    const dominantPeakOut = { hz: 0, db: 0 };
+    const pitchDetectOut = { f0: 0, confidence: 0 };
+    const windowCleanPeak = {
+      valid: false,
+      hz: 0,
+      db: 0,
+      f0: 0,
+      snr: 0,
+      timestamp: 0
+    };
+
+    // Static Pre-allocated Axis Tick Arrays (Zero Array/Object Allocation per Frame, 20 Hz – 20 kHz)
+    const LOG_FREQ_TICKS = Object.freeze([
+      { f: 20, label: '20' },
+      { f: 50, label: '50' },
+      { f: 100, label: '100' },
+      { f: 200, label: '200' },
+      { f: 500, label: '500' },
+      { f: 1000, label: '1k' },
+      { f: 2000, label: '2k' },
+      { f: 5000, label: '5k' },
+      { f: 10000, label: '10k' },
+      { f: 20000, label: '20k' }
+    ]);
+
+    const LINEAR_FREQ_TICKS = Object.freeze([
+      { f: 20, label: '20' },
+      { f: 4000, label: '4k' },
+      { f: 8000, label: '8k' },
+      { f: 12000, label: '12k' },
+      { f: 16000, label: '16k' },
+      { f: 20000, label: '20k' }
+    ]);
+
+    // HUD Readout Throttle Interval (120ms = within 100-150ms spec for calm, flicker-free numbers)
+    const HUD_THROTTLE_MS = 120;
+    const CURSOR_HUD_THROTTLE_MS = 100;
+    const DISPLAY_EMA_ALPHA = 0.35;
+
+    const analyzerState = {
+      audioCtx: null,
+      mediaStream: null,
+      sourceNode: null,
+      analyserNode: null,
+      isMicActive: false,
+      isStartingMic: false,
+      isPaused: false,
+      fftSize: 4096,
+      smoothing: 0.65,
+      freqScale: 'log', // 'log' | 'linear'
+      freqData: null,
+      byteFreqData: null,
+      timeData: null, // Time-domain waveform for Autocorrelation / F₀ pitch detection
+      peakHoldData: null,
+      currentDominantHz: 0,
+      currentDominantDb: 0,
+      currentF0Hz: 0, // Fundamental Frequency (f₀) in Hz
+      currentF0Confidence: 0, // Confidence score (0 to 1)
+      displayDominantHz: 0,
+      displayDominantDb: 0,
+      displayF0Hz: 0,
+      displayF0Confidence: 0,
+      lastHudUpdateTime: 0,
+      lastCursorHudUpdateTime: 0,
+      animFrameId: null,
+      cursorX: null,
+      cursorY: null,
+      cursorCanvas: null,
+      cursorTrackedFreq: null,
+      cursorTrackedDb: null,
+      noiseGateDb: 45,
+      ambientNoiseFloorDb: 18,
+      currentSpectralMeanDb: 10,
+      currentSnrDb: 0,
+      isCleanSignal: false,
+      recordedRows: [],
+      autoRecordTimer: null,
+      autoRecordIntervalSec: 0,
+      hasStoppedAutoPlot: false
+    };
+
+    // Cached DOM References & Dirty-Checked DOM Setters (Prevents Layout Thrashing)
+    const hudDom = {
+      f0Hz: null,
+      f0Note: null,
+      f0Badge: null,
+      peakHz: null,
+      peakDb: null,
+      peakNote: null,
+      noteTarget: null,
+      centsDiff: null,
+      cursorMain: null,
+      cursorSub: null,
+      chkTrackF0: null,
+      noiseStatusDot: null,
+      noiseStatusText: null,
+      fftCanvas: null,
+      wfCanvas: null,
+      fftCtx: null,
+      wfCtx: null
+    };
+
+    function initHudDomCache() {
+      hudDom.f0Hz = document.getElementById('readoutF0Hz');
+      hudDom.f0Note = document.getElementById('readoutF0Note');
+      hudDom.f0Badge = document.getElementById('f0ConfidenceBadge');
+      hudDom.peakHz = document.getElementById('readoutPeakHz');
+      hudDom.peakDb = document.getElementById('readoutPeakDb');
+      hudDom.peakNote = document.getElementById('readoutNote');
+      hudDom.noteTarget = document.getElementById('readoutNoteTarget');
+      hudDom.centsDiff = document.getElementById('readoutCentsDiff');
+      hudDom.cursorMain = document.getElementById('readoutCursor');
+      hudDom.cursorSub = document.getElementById('readoutCursorSub');
+      hudDom.chkTrackF0 = document.getElementById('chkTrackF0');
+      hudDom.noiseStatusDot = document.getElementById('noiseGateStatusDot');
+      hudDom.noiseStatusText = document.getElementById('noiseGateStatusText');
+      hudDom.fftCanvas = document.getElementById('fftCanvas');
+      hudDom.wfCanvas = document.getElementById('waterfallCanvas');
+      if (hudDom.fftCanvas) hudDom.fftCtx = hudDom.fftCanvas.getContext('2d');
+      if (hudDom.wfCanvas) hudDom.wfCtx = hudDom.wfCanvas.getContext('2d');
+    }
+
+    function setTextIfChanged(el, nextText) {
+      if (el && el.textContent !== nextText) {
+        el.textContent = nextText;
+      }
+    }
+
+    function setClassIfChanged(el, nextClass) {
+      if (el && el.className !== nextClass) {
+        el.className = nextClass;
+      }
+    }
+
+    // Bind pre-allocated typed array views for current FFT size without allocating new buffers
+    function bindReusableAnalyzerBuffers(fftSize) {
+      const clampedFft = Math.min(MAX_FFT_SIZE, Math.max(512, fftSize));
+      const binCount = clampedFft >>> 1;
+      analyzerState.freqData = sharedFloatFreqPool.subarray(0, binCount);
+      analyzerState.byteFreqData = sharedByteFreqPool.subarray(0, binCount);
+      analyzerState.timeData = sharedFloatTimePool.subarray(0, clampedFft);
+      analyzerState.peakHoldData = sharedPeakHoldPool.subarray(0, binCount);
+      analyzerState.freqData.fill(0);
+      analyzerState.byteFreqData.fill(0);
+      analyzerState.timeData.fill(0);
+      analyzerState.peakHoldData.fill(0);
+    }
+
+    // Canvas Layout Margins (shared horizontally between FFT & Waterfall so axes align 1:1)
+    const PLOT_MARGIN = { left: 58, right: 22, topFft: 18, bottomFft: 28, topWf: 0, bottomWf: 26 };
+
+    // Offscreen double-buffer for crisp Waterfall scrolling + Reusable Row ImageData
+    const wfOffscreenA = document.createElement('canvas');
+    const wfOffscreenB = document.createElement('canvas');
+    const wfCtxA = wfOffscreenA.getContext('2d');
+    const wfCtxB = wfOffscreenB.getContext('2d');
+    const WF_SCROLL_PX = 2;
+    let wfRowImageData = null;
+    let wfRowImageWidth = 0;
+
+    // Cached FFT Fill Gradient (rebuilt only on canvas height change)
+    let cachedFftGrad = null;
+    let cachedFftGradPlotY = -1;
+    let cachedFftGradPlotH = -1;
+
+    // Precomputed Pixel-to-FFT-Bin Lookup Table (Eliminates thousands of Math.pow calls per frame)
+    let pxLutCapacity = 0;
+    let pxLutPlotW = 0;
+    let pxLutSampleRate = 0;
+    let pxLutFftSize = 0;
+    let pxLutScale = '';
+    let pxLutMode = new Uint8Array(0);
+    let pxLutStart = new Int32Array(0);
+    let pxLutEnd = new Int32Array(0);
+    let pxLutFrac = new Float32Array(0);
+
+    function ensurePixelBinLookup(plotW, sampleRate, fftSize, scaleMode) {
+      if (
+        plotW === pxLutPlotW &&
+        sampleRate === pxLutSampleRate &&
+        fftSize === pxLutFftSize &&
+        scaleMode === pxLutScale
+      ) {
+        return;
+      }
+      if (plotW > pxLutCapacity) {
+        pxLutCapacity = Math.max(plotW + 256, 2048);
+        pxLutMode = new Uint8Array(pxLutCapacity);
+        pxLutStart = new Int32Array(pxLutCapacity);
+        pxLutEnd = new Int32Array(pxLutCapacity);
+        pxLutFrac = new Float32Array(pxLutCapacity);
+      }
+
+      const binCount = fftSize >>> 1;
+      const binHz = sampleRate / fftSize;
+      const denomW = Math.max(1, plotW - 1);
+
+      for (let x = 0; x < plotW; x++) {
+        const fCenter = xRatioToFreq(x / denomW);
+        const fLeft = xRatioToFreq((x - 0.5) / denomW);
+        const fRight = xRatioToFreq((x + 0.5) / denomW);
+
+        const bLeft = fLeft / binHz;
+        const bRight = fRight / binHz;
+
+        if (bRight - bLeft <= 1.0) {
+          const exactBin = fCenter / binHz;
+          const i0 = Math.max(0, Math.min(binCount - 1, Math.floor(exactBin)));
+          const i1 = Math.max(0, Math.min(binCount - 1, i0 + 1));
+          pxLutMode[x] = 0;
+          pxLutStart[x] = i0;
+          pxLutEnd[x] = i1;
+          pxLutFrac[x] = exactBin - i0;
+        } else {
+          pxLutMode[x] = 1;
+          pxLutStart[x] = Math.max(0, Math.floor(bLeft));
+          pxLutEnd[x] = Math.min(binCount - 1, Math.ceil(bRight));
+          pxLutFrac[x] = 0;
+        }
+      }
+
+      pxLutPlotW = plotW;
+      pxLutSampleRate = sampleRate;
+      pxLutFftSize = fftSize;
+      pxLutScale = scaleMode;
+    }
+
+    // Precompute 256-level Spectrogram Color Heatmap LUT:
+    // Black -> Blue -> Green -> Yellow -> Red -> White
+    const HEATMAP_LUT = new Uint8ClampedArray(256 * 4);
+    (function buildHeatmapLUT() {
+      const stops = [
+        { pos: 0.00, rgb: [0, 0, 0] },       // Black
+        { pos: 0.22, rgb: [0, 60, 255] },    // Blue
+        { pos: 0.45, rgb: [0, 220, 90] },    // Green
+        { pos: 0.67, rgb: [255, 230, 0] },   // Yellow
+        { pos: 0.85, rgb: [255, 35, 35] },   // Red
+        { pos: 1.00, rgb: [255, 255, 255] }  // White
+      ];
+
+      for (let i = 0; i < 256; i++) {
+        const t = i / 255;
+        let s0 = stops[0], s1 = stops[stops.length - 1];
+        for (let j = 0; j < stops.length - 1; j++) {
+          if (t >= stops[j].pos && t <= stops[j + 1].pos) {
+            s0 = stops[j];
+            s1 = stops[j + 1];
+            break;
+          }
+        }
+        const localT = (s1.pos === s0.pos) ? 0 : (t - s0.pos) / (s1.pos - s0.pos);
+        HEATMAP_LUT[i * 4 + 0] = Math.round(s0.rgb[0] + (s1.rgb[0] - s0.rgb[0]) * localT);
+        HEATMAP_LUT[i * 4 + 1] = Math.round(s0.rgb[1] + (s1.rgb[1] - s0.rgb[1]) * localT);
+        HEATMAP_LUT[i * 4 + 2] = Math.round(s0.rgb[2] + (s1.rgb[2] - s0.rgb[2]) * localT);
+        HEATMAP_LUT[i * 4 + 3] = 255;
+      }
+    })();
+
+    // Coordinate Conversion Helpers (10 Hz to 20,000 Hz)
+    function xRatioToFreq(normX) {
+      const clamped = Math.max(0, Math.min(1, normX));
+      if (analyzerState.freqScale === 'log') {
+        return MIN_FREQ * Math.pow(MAX_FREQ / MIN_FREQ, clamped);
+      }
+      return MIN_FREQ + clamped * (MAX_FREQ - MIN_FREQ);
+    }
+
+    function freqToXRatio(freq) {
+      const f = Math.max(MIN_FREQ, Math.min(MAX_FREQ, freq));
+      if (analyzerState.freqScale === 'log') {
+        return Math.log(f / MIN_FREQ) / Math.log(MAX_FREQ / MIN_FREQ);
+      }
+      return (f - MIN_FREQ) / (MAX_FREQ - MIN_FREQ);
+    }
+
+    function freqToNoteString(freq) {
+      if (!freq || freq < 10 || !isFinite(freq)) return '--';
+      const midi = 69 + 12 * Math.log2(freq / 440);
+      const nearestMidi = Math.round(midi);
+      const cents = Math.round((midi - nearestMidi) * 100);
+      const noteName = NOTE_NAMES[((nearestMidi % 12) + 12) % 12];
+      const octave = Math.floor(nearestMidi / 12) - 1;
+      const sign = cents >= 0 ? '+' : '';
+      return `${noteName}${octave} (${sign}${cents}c)`;
+    }
+
+    // Cross-OS Mobile Audio Session & WebKit Unlock Helper (iOS Safari / Android Chrome / Firefox)
+    function configureMobileAudioSession(mode) {
+      try {
+        if ('audioSession' in navigator && navigator.audioSession) {
+          navigator.audioSession.type = mode; // 'playback' or 'play-and-record'
+        }
+      } catch (_) {}
+    }
+
+    async function unlockAndResumeAudioContext(ctx) {
+      if (!ctx) return;
+      try {
+        if (ctx.state === 'suspended' || ctx.state === 'interrupted') {
+          await ctx.resume();
+        }
+        // Play a 1-sample silent buffer to unlock iOS WebKit audio output channel
+        const silentBuf = ctx.createBuffer(1, 1, 22050);
+        const src = ctx.createBufferSource();
+        src.buffer = silentBuf;
+        src.connect(ctx.destination);
+        src.start(0);
+      } catch (_) {}
+    }
+
+    async function cleanupAnalyzerAudio() {
+      if (analyzerState.animFrameId) {
+        cancelAnimationFrame(analyzerState.animFrameId);
+        analyzerState.animFrameId = null;
+      }
+      if (analyzerState.sourceNode) {
+        try { analyzerState.sourceNode.disconnect(); } catch (_) {}
+        analyzerState.sourceNode = null;
+      }
+      if (analyzerState.analyserNode) {
+        try { analyzerState.analyserNode.disconnect(); } catch (_) {}
+        analyzerState.analyserNode = null;
+      }
+      if (analyzerState.mediaStream) {
+        try {
+          const tracks = analyzerState.mediaStream.getTracks();
+          for (let i = 0; i < tracks.length; i++) {
+            tracks[i].stop();
+          }
+        } catch (_) {}
+        analyzerState.mediaStream = null;
+      }
+      if (analyzerState.audioCtx) {
+        const oldCtx = analyzerState.audioCtx;
+        analyzerState.audioCtx = null;
+        try {
+          if (oldCtx.state !== 'closed') {
+            await oldCtx.close();
+          }
+        } catch (_) {}
+      }
+    }
+
+    function resetAnalyzerHudToIdle() {
+      if (!hudDom.f0Hz) initHudDomCache();
+      setTextIfChanged(hudDom.f0Hz, '---.- Hz');
+      setTextIfChanged(hudDom.f0Note, 'f₀ Note: --');
+      setTextIfChanged(hudDom.f0Badge, 'Pitch');
+      setClassIfChanged(
+        hudDom.f0Badge,
+        'inline-flex items-center justify-center min-w-[58px] text-center text-[9px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 font-mono tabular-readout shrink-0'
+      );
+      setTextIfChanged(hudDom.peakHz, '---.- Hz');
+      setTextIfChanged(hudDom.peakDb, '---.- dBFS');
+      setTextIfChanged(hudDom.peakNote, 'Peak Note: --');
+      setTextIfChanged(hudDom.noteTarget, '--');
+      setTextIfChanged(hudDom.centsDiff, '-- cents');
+      if (hudDom.noiseStatusDot && hudDom.noiseStatusText) {
+        setClassIfChanged(hudDom.noiseStatusDot, 'w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0');
+        setTextIfChanged(
+          hudDom.noiseStatusText,
+          'คัดกรองเฉพาะเสียงจริงจากอุปกรณ์/เครื่องดนตรี (ตัดเสียงรบกวนและเสียง Background อัตโนมัติ)'
+        );
+        setClassIfChanged(hudDom.noiseStatusText, 'ml-1 font-medium text-emerald-800');
+      }
+    }
+
+    async function toggleMicrophone() {
+      if (analyzerState.isStartingMic) return;
+      if (analyzerState.isMicActive) {
+        await stopMicrophone();
+      } else {
+        await startMicrophone();
+      }
+    }
+
+    async function startMicrophone() {
+      if (analyzerState.isStartingMic) return;
+      analyzerState.isStartingMic = true;
+
+      const errBanner = document.getElementById('micErrorBanner');
+      errBanner.classList.add('hidden');
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        errBanner.textContent =
+          'เบราว์เซอร์บนมือถือต้องการการเชื่อมต่อผ่าน HTTPS หรือ localhost จึงจะเปิดใช้ไมโครโฟนได้ (Secure Context Required)';
+        errBanner.classList.remove('hidden');
+        analyzerState.isStartingMic = false;
+        return;
+      }
+
+      try {
+        // Ensure any previous AudioContext, Nodes, or MediaStream tracks are disconnected and closed
+        await cleanupAnalyzerAudio();
+
+        configureMobileAudioSession('play-and-record');
+        const useRawDsp = document.getElementById('chkRawAudio').checked;
+
+        let stream;
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+              echoCancellation: !useRawDsp,
+              noiseSuppression: !useRawDsp,
+              autoGainControl: !useRawDsp
+            }
+          });
+        } catch (_) {
+          stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        }
+
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        analyzerState.audioCtx = ctx;
+        await unlockAndResumeAudioContext(ctx);
+
+        analyzerState.mediaStream = stream;
+        analyzerState.sourceNode = ctx.createMediaStreamSource(stream);
+        analyzerState.analyserNode = ctx.createAnalyser();
+        analyzerState.analyserNode.fftSize = analyzerState.fftSize;
+        analyzerState.analyserNode.smoothingTimeConstant = analyzerState.smoothing;
+        analyzerState.analyserNode.minDecibels = RAW_MIN_DB;
+        analyzerState.analyserNode.maxDecibels = RAW_MAX_DB;
+
+        analyzerState.sourceNode.connect(analyzerState.analyserNode);
+
+        // Bind pre-allocated typed array views (zero allocation inside RAF loop)
+        bindReusableAnalyzerBuffers(analyzerState.fftSize);
+
+        analyzerState.isMicActive = true;
+        analyzerState.isPaused = false;
+        analyzerState.lastHudUpdateTime = 0;
+        analyzerState.displayDominantHz = 0;
+        analyzerState.displayDominantDb = 0;
+        analyzerState.displayF0Hz = 0;
+        analyzerState.displayF0Confidence = 0;
+
+        if (!hudDom.f0Hz) initHudDomCache();
+        updateMicUIState();
+        document.getElementById('labelSampleRate').textContent = `SR: ${ctx.sampleRate} Hz`;
+
+        analyzerState.animFrameId = requestAnimationFrame(renderAnalyzerLoop);
+      } catch (err) {
+        await cleanupAnalyzerAudio();
+        errBanner.textContent = `ไม่สามารถเข้าถึงไมโครโฟนได้: ${err.message || err} (กรุณาอนุญาตการใช้ไมโครโฟนในเบราว์เซอร์หรือตั้งค่า HTTPS)`;
+        errBanner.classList.remove('hidden');
+      } finally {
+        analyzerState.isStartingMic = false;
+      }
+    }
+
+    async function restartMicrophoneWithSettings() {
+      if (!analyzerState.isMicActive) return;
+      await stopMicrophone();
+      await startMicrophone();
+    }
+
+    async function stopMicrophone() {
+      analyzerState.isMicActive = false;
+      analyzerState.isPaused = false;
+      analyzerState.isCleanSignal = false;
+      windowCleanPeak.valid = false;
+
+      if (analyzerState.autoRecordIntervalSec > 0) {
+        analyzerState.hasStoppedAutoPlot = true;
+      }
+      if (analyzerState.autoRecordTimer) {
+        clearInterval(analyzerState.autoRecordTimer);
+        analyzerState.autoRecordTimer = null;
+      }
+      analyzerState.autoRecordIntervalSec = 0;
+      updateAutoPlotButtonsUI();
+
+      await cleanupAnalyzerAudio();
+      document.getElementById('labelSampleRate').textContent = 'SR: -- Hz';
+      updateMicUIState();
+      resetAnalyzerHudToIdle();
+      drawStaticAnalyzerFrames();
+    }
+
+    function togglePauseAnalyzer() {
+      if (!analyzerState.isMicActive) return;
+      analyzerState.isPaused = !analyzerState.isPaused;
+      updateMicUIState();
+    }
+
+    function updateMicUIState() {
+      const btnMic = document.getElementById('btnMicToggle');
+      const lblMic = document.getElementById('btnMicLabel');
+      const btnPause = document.getElementById('btnPauseAnalyzer');
+      const lblPause = document.getElementById('btnPauseLabel');
+      const statusDot = document.getElementById('micStatusDot');
+
+      if (analyzerState.isMicActive) {
+        lblMic.textContent = 'Stop Mic';
+        btnMic.className =
+          'flex items-center justify-center gap-2 px-3.5 sm:px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm bg-rose-600 hover:bg-rose-700 text-white shadow-md transition-all';
+        btnPause.disabled = false;
+
+        if (analyzerState.isPaused) {
+          lblPause.textContent = '▶ Resume Display';
+          btnPause.className =
+            'flex items-center justify-center gap-1.5 px-3 sm:px-3.5 py-2.5 rounded-xl font-semibold text-xs sm:text-sm bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300 transition-all';
+          statusDot.className = 'w-2 h-2 rounded-full bg-amber-500 shrink-0';
+        } else {
+          lblPause.textContent = '⏸ Pause Display';
+          btnPause.className =
+            'flex items-center justify-center gap-1.5 px-3 sm:px-3.5 py-2.5 rounded-xl font-medium text-xs sm:text-sm bg-purple-100 hover:bg-purple-200 text-purple-900 border border-purple-200 transition-all';
+          statusDot.className = 'w-2 h-2 rounded-full bg-emerald-500 animate-live-dot shrink-0';
+        }
+      } else {
+        lblMic.textContent = 'Start Mic';
+        btnMic.className =
+          'flex items-center justify-center gap-2 px-3.5 sm:px-4 py-2.5 rounded-xl font-semibold text-xs sm:text-sm bg-purple-700 hover:bg-purple-800 text-white shadow-md transition-all';
+        btnPause.disabled = true;
+        lblPause.textContent = 'Pause Display';
+        statusDot.className = 'w-2 h-2 rounded-full bg-slate-400 shrink-0';
+      }
+    }
+
+    function updateFftSize(val) {
+      const size = parseInt(val, 10);
+      analyzerState.fftSize = size;
+      if (analyzerState.analyserNode) {
+        analyzerState.analyserNode.fftSize = size;
+      }
+      bindReusableAnalyzerBuffers(size);
+    }
+
+    function updateSmoothing(val) {
+      const sm = parseFloat(val);
+      analyzerState.smoothing = sm;
+      document.getElementById('labelSmoothingVal').textContent = sm.toFixed(2);
+      if (analyzerState.analyserNode) {
+        analyzerState.analyserNode.smoothingTimeConstant = sm;
+      }
+    }
+
+    function updateFreqScale(mode) {
+      analyzerState.freqScale = mode;
+      wfCtxA.fillStyle = '#000000';
+      wfCtxA.fillRect(0, 0, wfOffscreenA.width, wfOffscreenA.height);
+      if (!analyzerState.isMicActive || analyzerState.isPaused) {
+        drawStaticAnalyzerFrames();
+      }
+    }
+
+    function toggleTrackF0Btn() {
+      const chk = document.getElementById('chkTrackF0');
+      const btn = document.getElementById('btnToggleF0');
+      const badge = document.getElementById('badgeTrackF0State');
+      if (!chk) return;
+
+      chk.checked = !chk.checked;
+      const isOn = chk.checked;
+
+      if (btn) {
+        btn.className = isOn
+          ? 'w-full flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-xl font-semibold text-xs bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-700 transition-all shadow-sm select-none min-w-0'
+          : 'w-full flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-xl font-semibold text-xs bg-slate-200 hover:bg-slate-300 text-slate-600 border border-slate-300 transition-all shadow-sm select-none min-w-0';
+      }
+      if (badge) {
+        badge.textContent = isOn ? 'ON' : 'OFF';
+        badge.className = isOn
+          ? 'ml-0.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-800/90 text-emerald-50 shrink-0'
+          : 'ml-0.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-300 text-slate-700 shrink-0';
+      }
+
+      if (!isOn) {
+        analyzerState.currentF0Hz = 0;
+        analyzerState.currentF0Confidence = 0;
+        analyzerState.displayF0Hz = 0;
+        analyzerState.displayF0Confidence = 0;
+        if (!hudDom.f0Hz) initHudDomCache();
+        setTextIfChanged(hudDom.f0Hz, '---.- Hz');
+        setTextIfChanged(hudDom.f0Note, 'f₀: OFF');
+        setTextIfChanged(hudDom.f0Badge, 'OFF');
+        setClassIfChanged(
+          hudDom.f0Badge,
+          'inline-flex items-center justify-center min-w-[58px] text-center text-[9px] px-1.5 py-0.2 rounded bg-slate-200 text-slate-700 font-mono tabular-readout shrink-0'
+        );
+      }
+
+      if (!analyzerState.isMicActive || analyzerState.isPaused) {
+        drawStaticAnalyzerFrames();
+      }
+    }
+
+    async function toggleRawDspBtn() {
+      const chk = document.getElementById('chkRawAudio');
+      const btn = document.getElementById('btnToggleRawDsp');
+      const badge = document.getElementById('badgeRawDspState');
+      if (!chk) return;
+
+      chk.checked = !chk.checked;
+      const isOn = chk.checked;
+
+      if (btn) {
+        btn.className = isOn
+          ? 'w-full flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-xl font-semibold text-xs bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-700 transition-all shadow-sm select-none min-w-0'
+          : 'w-full flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-xl font-semibold text-xs bg-slate-200 hover:bg-slate-300 text-slate-600 border border-slate-300 transition-all shadow-sm select-none min-w-0';
+      }
+      if (badge) {
+        badge.textContent = isOn ? 'ON' : 'OFF';
+        badge.className = isOn
+          ? 'ml-0.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-800/90 text-emerald-50 shrink-0'
+          : 'ml-0.5 px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-300 text-slate-700 shrink-0';
+      }
+
+      if (analyzerState.isMicActive) {
+        await restartMicrophoneWithSettings();
+      }
+    }
+
+    function resetPeakHold() {
+      if (analyzerState.peakHoldData) {
+        analyzerState.peakHoldData.fill(0);
+      }
+      if (!analyzerState.isMicActive || analyzerState.isPaused) {
+        drawStaticAnalyzerFrames();
+      }
+    }
+
+    // Resize Canvases for High-DPI Displays (Waterfall 1.5x height preserved)
+    function resizeAnalyzerCanvases() {
+      const dpr = window.devicePixelRatio || 1;
+      const fftCanvas = hudDom.fftCanvas || document.getElementById('fftCanvas');
+      const wfCanvas = hudDom.wfCanvas || document.getElementById('waterfallCanvas');
+      if (!fftCanvas || !wfCanvas) return;
+
+      const fftRect = fftCanvas.getBoundingClientRect();
+      const wfRect = wfCanvas.getBoundingClientRect();
+      if (fftRect.width === 0 || wfRect.width === 0) return;
+
+      fftCanvas.width = Math.floor(fftRect.width * dpr);
+      fftCanvas.height = Math.floor(fftRect.height * dpr);
+
+      wfCanvas.width = Math.floor(wfRect.width * dpr);
+      wfCanvas.height = Math.floor(wfRect.height * dpr);
+
+      cachedFftGrad = null;
+
+      // Resize offscreen waterfall plot buffers (plot area in CSS pixels)
+      const plotW = Math.max(10, Math.floor(wfRect.width - PLOT_MARGIN.left - PLOT_MARGIN.right));
+      const plotH = Math.max(10, Math.floor(wfRect.height - PLOT_MARGIN.topWf - PLOT_MARGIN.bottomWf));
+
+      if (wfOffscreenA.width !== plotW || wfOffscreenA.height !== plotH) {
+        wfOffscreenB.width = wfOffscreenA.width || plotW;
+        wfOffscreenB.height = wfOffscreenA.height || plotH;
+        if (wfOffscreenA.width > 0 && wfOffscreenA.height > 0) {
+          wfCtxB.drawImage(wfOffscreenA, 0, 0);
+        }
+
+        wfOffscreenA.width = plotW;
+        wfOffscreenA.height = plotH;
+        wfCtxA.fillStyle = '#000000';
+        wfCtxA.fillRect(0, 0, plotW, plotH);
+        if (wfOffscreenB.width > 0 && wfOffscreenB.height > 0) {
+          wfCtxA.drawImage(wfOffscreenB, 0, 0, plotW, plotH);
+        }
+        wfOffscreenB.width = plotW;
+        wfOffscreenB.height = plotH;
+      }
+
+      if (wfRowImageWidth !== plotW || !wfRowImageData) {
+        wfRowImageData = wfCtxA.createImageData(plotW, WF_SCROLL_PX);
+        wfRowImageWidth = plotW;
+      }
+    }
+
+    // Sample Spectrum Magnitude at Pixel X (Uses Precomputed LUT for Integer Pixels, Zero Math.pow in RAF)
+    function sampleSpectrumAtPixel(dataArray, xPixel, plotW, sampleRate, fftSize) {
+      if (!dataArray) return MIN_DB;
+      const binCount = dataArray.length;
+
+      // Fast O(1) LUT path when xPixel is an integer pixel index within [0, plotW - 1]
+      const xInt = xPixel | 0;
+      if (xInt === xPixel && xInt >= 0 && xInt < plotW) {
+        ensurePixelBinLookup(plotW, sampleRate, fftSize, analyzerState.freqScale);
+        if (pxLutMode[xInt] === 0) {
+          const i0 = Math.min(binCount - 1, pxLutStart[xInt]);
+          const i1 = Math.min(binCount - 1, pxLutEnd[xInt]);
+          return dataArray[i0] + (dataArray[i1] - dataArray[i0]) * pxLutFrac[xInt];
+        } else {
+          const startIdx = Math.min(binCount - 1, pxLutStart[xInt]);
+          const endIdx = Math.min(binCount - 1, pxLutEnd[xInt]);
+          let maxVal = MIN_DB;
+          for (let i = startIdx; i <= endIdx; i++) {
+            if (dataArray[i] > maxVal) maxVal = dataArray[i];
+          }
+          return maxVal;
+        }
+      }
+
+      // Fractional coordinate fallback (e.g., cursor or f0 marker)
+      const binHz = sampleRate / fftSize;
+      const denomW = Math.max(1, plotW - 1);
+      const fCenter = xRatioToFreq(xPixel / denomW);
+      const fLeft = xRatioToFreq((xPixel - 0.5) / denomW);
+      const fRight = xRatioToFreq((xPixel + 0.5) / denomW);
+
+      const bLeft = fLeft / binHz;
+      const bRight = fRight / binHz;
+
+      if (bRight - bLeft <= 1.0) {
+        const exactBin = fCenter / binHz;
+        const i0 = Math.max(0, Math.min(binCount - 1, Math.floor(exactBin)));
+        const i1 = Math.max(0, Math.min(binCount - 1, i0 + 1));
+        const frac = exactBin - i0;
+        return dataArray[i0] + (dataArray[i1] - dataArray[i0]) * frac;
+      } else {
+        const startIdx = Math.max(0, Math.floor(bLeft));
+        const endIdx = Math.min(binCount - 1, Math.ceil(bRight));
+        let maxVal = MIN_DB;
+        for (let i = startIdx; i <= endIdx; i++) {
+          if (dataArray[i] > maxVal) maxVal = dataArray[i];
+        }
+        return maxVal;
+      }
+    }
+
+    // Compute Dominant Frequency Peak with Parabolic Sub-Bin Interpolation (Mutates outStruct in-place)
+    function detectDominantPeak(freqData, sampleRate, fftSize, outStruct) {
+      const target = outStruct || dominantPeakOut;
+      const binHz = sampleRate / fftSize;
+      const minBin = Math.max(1, Math.ceil(MIN_FREQ / binHz));
+      const maxBin = Math.min(freqData.length - 2, Math.floor(MAX_FREQ / binHz));
+
+      let bestBin = minBin;
+      let maxDb = -Infinity;
+      for (let i = minBin; i <= maxBin; i++) {
+        if (freqData[i] > maxDb) {
+          maxDb = freqData[i];
+          bestBin = i;
+        }
+      }
+
+      if (!isFinite(maxDb) || maxDb < 1.5) {
+        target.hz = 0;
+        target.db = 0;
+        return target;
+      }
+
+      const y1 = freqData[bestBin - 1];
+      const y2 = freqData[bestBin];
+      const y3 = freqData[bestBin + 1];
+      const denom = y1 - 2 * y2 + y3;
+
+      let delta = 0;
+      let interpDb = y2;
+      if (Math.abs(denom) > 1e-6) {
+        delta = Math.max(-0.5, Math.min(0.5, (0.5 * (y1 - y3)) / denom));
+        interpDb = y2 - 0.25 * (y1 - y3) * delta;
+      }
+
+      target.hz = (bestBin + delta) * binHz;
+      target.db = Math.max(MIN_DB, Math.min(MAX_DB, interpDb));
+      return target;
+    }
+
+    // =========================================================================
+    // FUNDAMENTAL FREQUENCY (f₀) / PITCH DETECTION (Zero-Allocation Autocorrelation)
+    // =========================================================================
+    function detectFundamentalFrequency(timeBuffer, sampleRate, outStruct) {
+      const target = outStruct || pitchDetectOut;
+      if (!timeBuffer || timeBuffer.length < 512) {
+        target.f0 = 0;
+        target.confidence = 0;
+        return target;
+      }
+
+      // Bound analysis window to at most 4096 samples for real-time speed while covering down to 20 Hz
+      const bufferSize = Math.min(timeBuffer.length, 4096);
+
+      // 1. Calculate Signal RMS & Build Prefix-Sum of Squares in Pre-allocated Pool (O(N))
+      const prefixSq = sharedPrefixSqPool;
+      prefixSq[0] = 0;
+      let sumSq = 0;
+      for (let i = 0; i < bufferSize; i++) {
+        const s = timeBuffer[i];
+        sumSq += s * s;
+        prefixSq[i + 1] = sumSq;
+      }
+      const rms = Math.sqrt(sumSq / bufferSize);
+      if (rms < 0.008) {
+        target.f0 = 0;
+        target.confidence = 0;
+        return target; // Too quiet / silent
+      }
+
+      // Range for musical pitch (20 Hz up to 2500 Hz)
+      const minPeriod = Math.max(2, Math.floor(sampleRate / 2500));
+      const maxPeriod = Math.min(bufferSize >>> 1, Math.ceil(sampleRate / 20));
+
+      // Find first zero crossing to avoid zero-lag peak
+      let startLag = minPeriod;
+      for (let lag = 1; lag < maxPeriod; lag++) {
+        if (timeBuffer[lag] < 0 && timeBuffer[lag - 1] >= 0) {
+          startLag = Math.max(minPeriod, lag);
+          break;
+        }
+      }
+
+      // 2. Normalized Autocorrelation using Pre-allocated sharedAutocorrPool & O(1) Energy Lookup
+      const corr = sharedAutocorrPool;
+      corr[startLag - 1] = 0;
+      let bestPeriod = -1;
+      let maxCorrelation = 0;
+
+      // Use step=2 when bufferSize >= 2048 for 2x faster inner product, preserving full lag resolution
+      const innerStep = bufferSize >= 2048 ? 2 : 1;
+
+      for (let lag = startLag; lag <= maxPeriod; lag++) {
+        const count = bufferSize - lag;
+        let sum = 0;
+        for (let i = 0; i < count; i += innerStep) {
+          sum += timeBuffer[i] * timeBuffer[i + lag];
+        }
+        if (innerStep === 2) sum *= 2;
+
+        const normA = prefixSq[count];
+        const normB = prefixSq[count + lag] - prefixSq[lag];
+        const denom = Math.sqrt(normA * normB);
+        const r = denom > 1e-9 ? sum / denom : 0;
+        corr[lag] = r;
+
+        if (r > 0.45 && lag > startLag) {
+          const prevR = corr[lag - 1];
+          if (prevR > 0.45 && prevR > maxCorrelation && prevR >= corr[lag - 2] && prevR >= r) {
+            maxCorrelation = prevR;
+            bestPeriod = lag - 1;
+          }
+        }
+      }
+
+      if (bestPeriod === -1 || maxCorrelation < 0.5) {
+        target.f0 = 0;
+        target.confidence = 0;
+        return target;
+      }
+
+      // 3. Exact Full-Resolution Parabolic Interpolation around bestPeriod (lag-1, lag, lag+1)
+      let y1 = corr[bestPeriod - 1];
+      let y2 = corr[bestPeriod];
+      let y3 = corr[bestPeriod + 1];
+
+      if (innerStep === 2 && bestPeriod > 1 && bestPeriod < maxPeriod) {
+        for (let offset = -1; offset <= 1; offset++) {
+          const l = bestPeriod + offset;
+          const cnt = bufferSize - l;
+          let exactSum = 0;
+          for (let i = 0; i < cnt; i++) {
+            exactSum += timeBuffer[i] * timeBuffer[i + l];
+          }
+          const nA = prefixSq[cnt];
+          const nB = prefixSq[cnt + l] - prefixSq[l];
+          const d = Math.sqrt(nA * nB);
+          const exactR = d > 1e-9 ? exactSum / d : 0;
+          if (offset === -1) y1 = exactR;
+          else if (offset === 0) y2 = exactR;
+          else y3 = exactR;
+        }
+        maxCorrelation = y2;
+      }
+
+      let delta = 0;
+      const denom = 2 * (2 * y2 - y1 - y3);
+      if (Math.abs(denom) > 1e-6) {
+        delta = Math.max(-0.5, Math.min(0.5, (y3 - y1) / denom));
+      }
+      const refinedPeriod = bestPeriod + delta;
+      const f0 = sampleRate / refinedPeriod;
+
+      target.f0 = f0 >= MIN_FREQ && f0 <= MAX_FREQ ? f0 : 0;
+      target.confidence = Math.min(1.0, Math.max(0, maxCorrelation));
+      return target;
+    }
+
+    // =========================================================================
+    // SMART BACKGROUND NOISE REJECTION ENGINE (Zero-Allocation SNR + Noise Gate)
+    // =========================================================================
+    function evaluateSignalVsBackgroundNoise(freqData, sampleRate, fftSize, peakHz, peakDb, f0Hz, f0Conf, nowMs) {
+      const binHz = sampleRate / fftSize;
+      const minBin = Math.max(1, Math.ceil(25 / binHz));
+      const maxBin = Math.min(freqData.length - 1, Math.floor(MAX_FREQ / binHz));
+
+      // Compute broadband spectral mean floor with stride 4 (fast O(N/4), zero allocation)
+      let sumDb = 0;
+      let count = 0;
+      for (let i = minBin; i <= maxBin; i += 4) {
+        const val = freqData[i];
+        sumDb += isFinite(val) ? Math.max(0, val) : 0;
+        count++;
+      }
+      const meanDb = count > 0 ? sumDb / count : 0;
+      analyzerState.currentSpectralMeanDb = meanDb;
+
+      // Spectral Prominence / Signal-to-Noise Ratio (dB above broadband floor)
+      const snrDb = Math.max(0, peakDb - meanDb);
+      analyzerState.currentSnrDb = snrDb;
+
+      // Adapt ambient room noise floor estimate during quiet/broadband-noise frames
+      if (snrDb < 8.5 || peakDb < analyzerState.noiseGateDb - 5) {
+        analyzerState.ambientNoiseFloorDb =
+          analyzerState.ambientNoiseFloorDb * 0.985 + Math.max(5, peakDb) * 0.015;
+      }
+
+      // Effective threshold: must exceed both user Noise Gate and Ambient Floor + 6 dB
+      const effectiveGateDb = Math.max(analyzerState.noiseGateDb, analyzerState.ambientNoiseFloorDb + 6.0);
+
+      // Clean signal criteria:
+      // 1) Audible frequency >= 25 Hz (rejects sub-sonic wind/handling thump)
+      // 2) Peak level >= effectiveGateDb (above background noise floor)
+      // 3) Either locked harmonic pitch (f0Conf >= 0.50 & snr >= 7.5 dB) OR strong tonal SNR >= 11.0 dB
+      const hasHarmonicPitch = f0Hz >= 25 && f0Conf >= 0.50 && snrDb >= 7.5;
+      const hasStrongTonalPeak = peakHz >= 25 && snrDb >= 11.0;
+      const isClean = peakHz >= 25 && peakDb >= effectiveGateDb && (hasHarmonicPitch || hasStrongTonalPeak);
+
+      analyzerState.isCleanSignal = isClean;
+
+      if (isClean) {
+        // Store the cleanest/strongest valid sound event during the current Auto-Plot window
+        if (!windowCleanPeak.valid || peakDb >= windowCleanPeak.db) {
+          windowCleanPeak.valid = true;
+          windowCleanPeak.hz = peakHz;
+          windowCleanPeak.db = peakDb;
+          windowCleanPeak.f0 = f0Hz >= 25 && f0Conf >= 0.50 ? f0Hz : peakHz;
+          windowCleanPeak.snr = snrDb;
+          windowCleanPeak.timestamp = nowMs;
+        }
+      }
+    }
+
+    // Throttled HUD Readout Renderer (Updates DOM at most every 120ms to eliminate flicker & layout shift)
+    function updateThrottledAnalyzerHud(nowMs) {
+      if (nowMs - analyzerState.lastHudUpdateTime < HUD_THROTTLE_MS) return;
+      analyzerState.lastHudUpdateTime = nowMs;
+
+      if (!hudDom.f0Hz) initHudDomCache();
+
+      const f0Hz = analyzerState.displayF0Hz;
+      const f0Conf = analyzerState.displayF0Confidence;
+
+      if (f0Hz >= MIN_FREQ && f0Conf >= 0.5) {
+        const f0Text = f0Hz >= 1000 ? `${f0Hz.toFixed(1)} Hz` : `${f0Hz.toFixed(2)} Hz`;
+        setTextIfChanged(hudDom.f0Hz, f0Text);
+        setTextIfChanged(hudDom.f0Note, `f₀: ${freqToNoteString(f0Hz)}`);
+        setTextIfChanged(hudDom.f0Badge, `${Math.round(f0Conf * 100)}% Lock`);
+        setClassIfChanged(
+          hudDom.f0Badge,
+          'inline-flex items-center justify-center min-w-[58px] text-center text-[9px] px-1.5 py-0.2 rounded bg-emerald-600 text-white font-mono tabular-readout shrink-0'
+        );
+      } else {
+        setTextIfChanged(hudDom.f0Hz, '---.- Hz');
+        setTextIfChanged(hudDom.f0Note, 'f₀: (ตรวจจับเสียง)');
+        setTextIfChanged(hudDom.f0Badge, 'Searching');
+        setClassIfChanged(
+          hudDom.f0Badge,
+          'inline-flex items-center justify-center min-w-[58px] text-center text-[9px] px-1.5 py-0.2 rounded bg-purple-100 text-purple-700 font-mono tabular-readout shrink-0'
+        );
+      }
+
+      const domHz = analyzerState.displayDominantHz;
+      const domDb = analyzerState.displayDominantDb;
+
+      if (domHz >= MIN_FREQ && domDb > 2) {
+        setTextIfChanged(
+          hudDom.peakHz,
+          domHz >= 1000 ? `${domHz.toFixed(1)} Hz` : `${domHz.toFixed(1)} Hz`
+        );
+        setTextIfChanged(hudDom.peakDb, `${domDb.toFixed(1)} dBFS`);
+        setTextIfChanged(hudDom.peakNote, `Peak: ${freqToNoteString(domHz)}`);
+
+        const midi = 69 + 12 * Math.log2(domHz / 440);
+        const nearestMidi = Math.round(midi);
+        const cents = Math.round((midi - nearestMidi) * 100);
+        const noteName = NOTE_NAMES[((nearestMidi % 12) + 12) % 12];
+        const octave = Math.floor(nearestMidi / 12) - 1;
+        setTextIfChanged(hudDom.noteTarget, `${noteName}${octave}`);
+        setTextIfChanged(hudDom.centsDiff, `${cents >= 0 ? '+' : ''}${cents} cents`);
+      } else {
+        setTextIfChanged(hudDom.peakHz, '---.- Hz');
+        setTextIfChanged(hudDom.peakDb, '< 2 dBFS');
+        setTextIfChanged(hudDom.peakNote, 'Peak: --');
+        setTextIfChanged(hudDom.noteTarget, '--');
+        setTextIfChanged(hudDom.centsDiff, '-- cents');
+      }
+
+      // Update Smart Background Noise Filter Status Bar
+      if (hudDom.noiseStatusDot && hudDom.noiseStatusText) {
+        if (analyzerState.isCleanSignal) {
+          setClassIfChanged(hudDom.noiseStatusDot, 'w-2.5 h-2.5 rounded-full bg-emerald-500 animate-live-dot shrink-0');
+          setTextIfChanged(
+            hudDom.noiseStatusText,
+            `ตรวจพบสัญญาณเสียงจริงชัดเจน (${domHz.toFixed(1)} Hz, ${domDb.toFixed(1)} dBFS | SNR +${analyzerState.currentSnrDb.toFixed(1)} dB) — พร้อมพล็อตกราฟ`
+          );
+          setClassIfChanged(hudDom.noiseStatusText, 'ml-1 font-semibold text-emerald-700');
+        } else {
+          setClassIfChanged(hudDom.noiseStatusDot, 'w-2.5 h-2.5 rounded-full bg-amber-500 shrink-0');
+          setTextIfChanged(
+            hudDom.noiseStatusText,
+            `กำลังกรองเสียงรบกวน Background Noise ออกอัตโนมัติ (ระดับปัจจุบันต่ำกว่าเกณฑ์ ${analyzerState.noiseGateDb} dB หรือเป็นเสียงซ่าพื้นหลัง)`
+          );
+          setClassIfChanged(hudDom.noiseStatusText, 'ml-1 font-medium text-amber-800');
+        }
+      }
+
+      // Also refresh Cursor Probe readout at throttled rate if cursor is hovering over active FFT
+      if (analyzerState.cursorX !== null && analyzerState.cursorTrackedFreq !== null) {
+        const freqStr = `${analyzerState.cursorTrackedFreq.toFixed(1)} Hz`;
+        const dbVal = analyzerState.cursorTrackedDb;
+        const dbStr = dbVal !== null && isFinite(dbVal) ? `${dbVal.toFixed(1)} dBFS` : '--- dB';
+        setTextIfChanged(hudDom.cursorMain, `${freqStr} | ${dbStr}`);
+      }
+    }
+
+    function renderAnalyzerLoop(timestamp) {
+      if (!analyzerState.isMicActive) return;
+      const nowMs = timestamp || performance.now();
+
+      if (!analyzerState.isPaused && analyzerState.analyserNode && analyzerState.audioCtx) {
+        // Reuse pre-allocated typed arrays (Zero Memory Allocation inside RAF)
+        analyzerState.analyserNode.getFloatFrequencyData(analyzerState.freqData);
+        if (analyzerState.byteFreqData) {
+          analyzerState.analyserNode.getByteFrequencyData(analyzerState.byteFreqData);
+        }
+        if (analyzerState.timeData) {
+          analyzerState.analyserNode.getFloatTimeDomainData(analyzerState.timeData);
+        }
+
+        // Convert raw dBFS [-100, 0] to positive scale [0, 100] (0dB ถึง 100dBFS) and update Peak Hold in-place
+        const fd = analyzerState.freqData;
+        const ph = analyzerState.peakHoldData;
+        for (let i = 0, len = fd.length; i < len; i++) {
+          const rawVal = fd[i];
+          const val = isFinite(rawVal) ? Math.max(MIN_DB, Math.min(MAX_DB, rawVal + 100)) : MIN_DB;
+          fd[i] = val;
+          if (val > ph[i]) {
+            ph[i] = val;
+          }
+        }
+
+        const sr = analyzerState.audioCtx.sampleRate;
+
+        // 1. Detect Dominant Peak Frequency (in-place into dominantPeakOut)
+        const peak = detectDominantPeak(fd, sr, analyzerState.fftSize, dominantPeakOut);
+        analyzerState.currentDominantHz = peak.hz;
+        analyzerState.currentDominantDb = peak.db;
+
+        // Smooth display values with Exponential Moving Average (EMA) to prevent visual jitter
+        if (peak.hz >= MIN_FREQ && peak.db > 2) {
+          if (analyzerState.displayDominantHz < MIN_FREQ || Math.abs(peak.hz - analyzerState.displayDominantHz) > 80) {
+            analyzerState.displayDominantHz = peak.hz;
+          } else {
+            analyzerState.displayDominantHz += (peak.hz - analyzerState.displayDominantHz) * DISPLAY_EMA_ALPHA;
+          }
+          if (analyzerState.displayDominantDb <= 2) {
+            analyzerState.displayDominantDb = peak.db;
+          } else {
+            analyzerState.displayDominantDb += (peak.db - analyzerState.displayDominantDb) * DISPLAY_EMA_ALPHA;
+          }
+        } else {
+          analyzerState.displayDominantHz = 0;
+          analyzerState.displayDominantDb = 0;
+        }
+
+        // 2. Measure Fundamental Frequency (f₀) via Time-Domain Pitch Detection (in-place into pitchDetectOut)
+        const isF0TrackingEnabled = hudDom.chkTrackF0 ? hudDom.chkTrackF0.checked : true;
+        if (isF0TrackingEnabled && analyzerState.timeData) {
+          const pitchRes = detectFundamentalFrequency(analyzerState.timeData, sr, pitchDetectOut);
+          analyzerState.currentF0Hz = pitchRes.f0;
+          analyzerState.currentF0Confidence = pitchRes.confidence;
+
+          if (pitchRes.f0 >= MIN_FREQ && pitchRes.confidence >= 0.5) {
+            if (analyzerState.displayF0Hz < MIN_FREQ || Math.abs(pitchRes.f0 - analyzerState.displayF0Hz) > 50) {
+              analyzerState.displayF0Hz = pitchRes.f0;
+            } else {
+              analyzerState.displayF0Hz += (pitchRes.f0 - analyzerState.displayF0Hz) * DISPLAY_EMA_ALPHA;
+            }
+            analyzerState.displayF0Confidence = pitchRes.confidence;
+          } else {
+            analyzerState.displayF0Hz = 0;
+            analyzerState.displayF0Confidence = 0;
+          }
+        } else {
+          analyzerState.currentF0Hz = 0;
+          analyzerState.currentF0Confidence = 0;
+          analyzerState.displayF0Hz = 0;
+          analyzerState.displayF0Confidence = 0;
+        }
+
+        // 2.5 Evaluate Clean Signal vs Background Noise (Zero-Allocation SNR & Noise Gate)
+        evaluateSignalVsBackgroundNoise(
+          fd,
+          sr,
+          analyzerState.fftSize,
+          peak.hz,
+          peak.db,
+          analyzerState.currentF0Hz,
+          analyzerState.currentF0Confidence,
+          nowMs
+        );
+
+        // 3. Throttled Digital Readout HUD Update (Every 120ms instead of every 16ms frame)
+        updateThrottledAnalyzerHud(nowMs);
+
+        // 4. Advance Waterfall Spectrogram downward (Reuses wfRowImageData)
+        pushWaterfallRow(fd, sr, analyzerState.fftSize);
+      }
+
+      drawFftCanvas();
+      drawWaterfallCanvas();
+
+      analyzerState.animFrameId = requestAnimationFrame(renderAnalyzerLoop);
+    }
+
+    function pushWaterfallRow(freqData, sampleRate, fftSize) {
+      const plotW = wfOffscreenA.width;
+      const plotH = wfOffscreenA.height;
+      if (plotW < 2 || plotH < 2) return;
+
+      if (!wfRowImageData || wfRowImageWidth !== plotW) {
+        wfRowImageData = wfCtxA.createImageData(plotW, WF_SCROLL_PX);
+        wfRowImageWidth = plotW;
+      }
+
+      wfCtxB.clearRect(0, 0, plotW, plotH);
+      wfCtxB.drawImage(wfOffscreenA, 0, 0);
+
+      wfCtxA.fillStyle = '#000000';
+      wfCtxA.fillRect(0, 0, plotW, WF_SCROLL_PX);
+      wfCtxA.drawImage(wfOffscreenB, 0, 0, plotW, plotH - WF_SCROLL_PX, 0, WF_SCROLL_PX, plotW, plotH - WF_SCROLL_PX);
+
+      const pixels = wfRowImageData.data;
+      const dbRangeInv = 1 / (MAX_DB - MIN_DB);
+
+      for (let x = 0; x < plotW; x++) {
+        const db = sampleSpectrumAtPixel(freqData, x, plotW, sampleRate, fftSize);
+        const norm = Math.max(0, Math.min(1, (db - MIN_DB) * dbRangeInv));
+        const lutIdx = Math.min(255, Math.max(0, (norm * 255 + 0.5) | 0)) << 2;
+
+        const rCol = HEATMAP_LUT[lutIdx];
+        const gCol = HEATMAP_LUT[lutIdx + 1];
+        const bCol = HEATMAP_LUT[lutIdx + 2];
+
+        for (let r = 0; r < WF_SCROLL_PX; r++) {
+          const pIdx = (r * plotW + x) << 2;
+          pixels[pIdx] = rCol;
+          pixels[pIdx + 1] = gCol;
+          pixels[pIdx + 2] = bCol;
+          pixels[pIdx + 3] = 255;
+        }
+      }
+      wfCtxA.putImageData(wfRowImageData, 0, 0);
+    }
+
+    function drawStaticAnalyzerFrames() {
+      drawFftCanvas();
+      drawWaterfallCanvas();
+    }
+
+    function getFreqGridTicks() {
+      return analyzerState.freqScale === 'log' ? LOG_FREQ_TICKS : LINEAR_FREQ_TICKS;
+    }
+
+    function drawFftCanvas() {
+      const canvas = hudDom.fftCanvas || document.getElementById('fftCanvas');
+      if (!canvas || canvas.width === 0) return;
+
+      const dpr = window.devicePixelRatio || 1;
+      const ctx = hudDom.fftCtx || canvas.getContext('2d');
+      const cssW = canvas.width / dpr;
+      const cssH = canvas.height / dpr;
+
+      ctx.save();
+      ctx.scale(dpr, dpr);
+
+      // Dark instrument background (preserved for Spectroid scientific accuracy)
+      ctx.fillStyle = '#050811';
+      ctx.fillRect(0, 0, cssW, cssH);
+
+      const plotX = PLOT_MARGIN.left;
+      const plotY = PLOT_MARGIN.topFft;
+      const plotW = Math.max(10, Math.floor(cssW - PLOT_MARGIN.left - PLOT_MARGIN.right));
+      const plotH = Math.max(10, Math.floor(cssH - PLOT_MARGIN.topFft - PLOT_MARGIN.bottomFft));
+
+      // Horizontal dBFS Gridlines (0dB to 100dBFS)
+      ctx.font = '11px "JetBrains Mono", monospace';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+
+      for (let db = 100; db >= 0; db -= 20) {
+        const y = plotY + ((MAX_DB - db) / (MAX_DB - MIN_DB)) * plotH;
+        ctx.strokeStyle = db === 100 ? 'rgba(148, 163, 184, 0.4)' : 'rgba(51, 65, 85, 0.45)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(plotX, y);
+        ctx.lineTo(plotX + plotW, y);
+        ctx.stroke();
+
+        ctx.fillStyle = '#94a3b8';
+        ctx.fillText(`${db} dB`, plotX - 8, y);
+      }
+
+      // Vertical Frequency Gridlines (20 Hz – 20 kHz)
+      const ticks = getFreqGridTicks();
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+      for (let i = 0; i < ticks.length; i++) {
+        const t = ticks[i];
+        const x = plotX + freqToXRatio(t.f) * plotW;
+        ctx.strokeStyle = t.f === 1000 ? 'rgba(34, 211, 238, 0.35)' : 'rgba(51, 65, 85, 0.45)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x, plotY);
+        ctx.lineTo(x, plotY + plotH);
+        ctx.stroke();
+
+        ctx.fillStyle = t.f === 1000 ? '#67e8f9' : '#94a3b8';
+        ctx.fillText(t.label, x, plotY + plotH + 7);
+      }
+
+      // Clip to Plot Box for Spectrum Curves
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(plotX, plotY, plotW, plotH);
+      ctx.clip();
+
+      let sampledFftDbAtCursor = null;
+
+      if (analyzerState.freqData && analyzerState.audioCtx) {
+        const sr = analyzerState.audioCtx.sampleRate;
+        const fftSize = analyzerState.fftSize;
+
+        // 1. Draw Peak Hold Curve (Red)
+        if (analyzerState.peakHoldData) {
+          ctx.beginPath();
+          for (let px = 0; px < plotW; px++) {
+            const db = sampleSpectrumAtPixel(analyzerState.peakHoldData, px, plotW, sr, fftSize);
+            const clampedDb = Math.max(MIN_DB, Math.min(MAX_DB, isFinite(db) ? db : MIN_DB));
+            const y = plotY + ((MAX_DB - clampedDb) / (MAX_DB - MIN_DB)) * plotH;
+            if (px === 0) ctx.moveTo(plotX + px, y);
+            else ctx.lineTo(plotX + px, y);
+          }
+          ctx.strokeStyle = '#fb7185';
+          ctx.lineWidth = 1.4;
+          ctx.stroke();
+        }
+
+        // 2. Draw Live Spectrum Curve (Neon Cyan + Translucent Gradient Fill)
+        ctx.beginPath();
+        for (let px = 0; px < plotW; px++) {
+          const db = sampleSpectrumAtPixel(analyzerState.freqData, px, plotW, sr, fftSize);
+          const clampedDb = Math.max(MIN_DB, Math.min(MAX_DB, isFinite(db) ? db : MIN_DB));
+          const y = plotY + ((MAX_DB - clampedDb) / (MAX_DB - MIN_DB)) * plotH;
+          if (px === 0) ctx.moveTo(plotX + px, y);
+          else ctx.lineTo(plotX + px, y);
+        }
+
+        ctx.strokeStyle = '#22d3ee';
+        ctx.lineWidth = 2.0;
+        ctx.shadowColor = 'rgba(34, 211, 238, 0.6)';
+        ctx.shadowBlur = 8;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Cached Gradient Fill under Live FFT Curve
+        ctx.lineTo(plotX + plotW, plotY + plotH);
+        ctx.lineTo(plotX, plotY + plotH);
+        ctx.closePath();
+        if (!cachedFftGrad || cachedFftGradPlotY !== plotY || cachedFftGradPlotH !== plotH) {
+          cachedFftGrad = ctx.createLinearGradient(0, plotY, 0, plotY + plotH);
+          cachedFftGrad.addColorStop(0, 'rgba(34, 211, 238, 0.35)');
+          cachedFftGrad.addColorStop(0.65, 'rgba(16, 185, 129, 0.12)');
+          cachedFftGrad.addColorStop(1, 'rgba(6, 182, 212, 0.01)');
+          cachedFftGradPlotY = plotY;
+          cachedFftGradPlotH = plotH;
+        }
+        ctx.fillStyle = cachedFftGrad;
+        ctx.fill();
+
+        // 3. Draw Fundamental Frequency (f₀) Tracker & Harmonic Series Markers
+        const f0 = analyzerState.displayF0Hz || analyzerState.currentF0Hz;
+        if (f0 >= MIN_FREQ && f0 <= MAX_FREQ && analyzerState.currentF0Confidence >= 0.5) {
+          const f0X = plotX + freqToXRatio(f0) * plotW;
+          const f0Db = sampleSpectrumAtPixel(analyzerState.freqData, f0X - plotX, plotW, sr, fftSize);
+          const f0Y = plotY + ((MAX_DB - Math.max(MIN_DB, Math.min(MAX_DB, f0Db))) / (MAX_DB - MIN_DB)) * plotH;
+
+          // Draw Harmonics guide lines (2f0, 3f0, 4f0)
+          for (let h = 2; h <= 4; h++) {
+            const hFreq = f0 * h;
+            if (hFreq <= MAX_FREQ) {
+              const hX = plotX + freqToXRatio(hFreq) * plotW;
+              ctx.setLineDash([2, 4]);
+              ctx.strokeStyle = 'rgba(52, 211, 153, 0.35)';
+              ctx.lineWidth = 1;
+              ctx.beginPath();
+              ctx.moveTo(hX, plotY);
+              ctx.lineTo(hX, plotY + plotH);
+              ctx.stroke();
+
+              ctx.font = '9px "JetBrains Mono", monospace';
+              ctx.fillStyle = '#6ee7b7';
+              ctx.textAlign = 'center';
+              ctx.fillText(`${h}f₀`, hX, plotY + 6);
+            }
+          }
+          ctx.setLineDash([]);
+
+          // Solid line on fundamental f0
+          ctx.setLineDash([4, 2]);
+          ctx.strokeStyle = '#10b981';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(f0X, plotY);
+          ctx.lineTo(f0X, plotY + plotH);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          // Glowing Emerald Fundamental marker
+          ctx.beginPath();
+          ctx.arc(f0X, f0Y, 5, 0, Math.PI * 2);
+          ctx.fillStyle = '#10b981';
+          ctx.shadowColor = '#10b981';
+          ctx.shadowBlur = 12;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+
+          // Fundamental callout badge
+          const f0BadgeText = `f₀: ${f0.toFixed(1)} Hz`;
+          ctx.font = '700 11px "JetBrains Mono", monospace';
+          const f0BadgeW = ctx.measureText(f0BadgeText).width + 12;
+          const f0BadgeX = Math.min(plotX + plotW - f0BadgeW - 4, Math.max(plotX + 4, f0X - f0BadgeW / 2));
+          const f0BadgeY = Math.max(plotY + 22, f0Y - 26);
+
+          ctx.fillStyle = 'rgba(6, 78, 59, 0.9)';
+          ctx.strokeStyle = '#34d399';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          if (typeof ctx.roundRect === 'function') {
+            ctx.roundRect(f0BadgeX, f0BadgeY, f0BadgeW, 19, 4);
+          } else {
+            ctx.rect(f0BadgeX, f0BadgeY, f0BadgeW, 19);
+          }
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.fillStyle = '#a7f3d0';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(f0BadgeText, f0BadgeX + f0BadgeW / 2, f0BadgeY + 9.5);
+        }
+
+        // 4. Draw Dominant Frequency Peak Marker & Callout Badge (Amber)
+        const domHz = analyzerState.displayDominantHz || analyzerState.currentDominantHz;
+        const domDb = analyzerState.displayDominantDb > 2 ? analyzerState.displayDominantDb : analyzerState.currentDominantDb;
+        if (domHz >= MIN_FREQ && domHz <= MAX_FREQ && domDb > 2) {
+          const peakX = plotX + freqToXRatio(domHz) * plotW;
+          const peakY = plotY + ((MAX_DB - Math.max(MIN_DB, Math.min(MAX_DB, domDb))) / (MAX_DB - MIN_DB)) * plotH;
+
+          ctx.setLineDash([3, 3]);
+          ctx.strokeStyle = 'rgba(251, 191, 36, 0.5)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(peakX, peakY);
+          ctx.lineTo(peakX, plotY + plotH);
+          ctx.stroke();
+          ctx.setLineDash([]);
+
+          ctx.beginPath();
+          ctx.arc(peakX, peakY, 4.5, 0, Math.PI * 2);
+          ctx.fillStyle = '#fbbf24';
+          ctx.shadowColor = '#fbbf24';
+          ctx.shadowBlur = 10;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+
+          const badgeText = `Peak: ${domHz >= 1000 ? domHz.toFixed(0) : domHz.toFixed(1)} Hz (${domDb.toFixed(1)} dBFS)`;
+          ctx.font = '600 11px "JetBrains Mono", monospace';
+          const textW = ctx.measureText(badgeText).width + 12;
+          const badgeX = Math.min(plotX + plotW - textW - 4, Math.max(plotX + 4, peakX - textW / 2));
+          const badgeY = Math.max(plotY + 4, peakY - 26);
+
+          ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
+          ctx.strokeStyle = 'rgba(251, 191, 36, 0.7)';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          if (typeof ctx.roundRect === 'function') {
+            ctx.roundRect(badgeX, badgeY, textW, 19, 4);
+          } else {
+            ctx.rect(badgeX, badgeY, textW, 19);
+          }
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.fillStyle = '#fde68a';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(badgeText, badgeX + textW / 2, badgeY + 9.5);
+        }
+
+        // 5. Track Real-time FFT Curve value exactly where mouse/touch points (ทั้งบน FFT และ Waterfall)
+        if (analyzerState.cursorX !== null && analyzerState.cursorX >= plotX && analyzerState.cursorX <= plotX + plotW) {
+          const samplePx = analyzerState.cursorX - plotX;
+          sampledFftDbAtCursor = sampleSpectrumAtPixel(analyzerState.freqData, samplePx, plotW, sr, fftSize);
+          analyzerState.cursorTrackedDb = sampledFftDbAtCursor;
+        }
+      } else {
+        // Idle Standby Message
+        ctx.fillStyle = 'rgba(148, 163, 184, 0.7)';
+        ctx.font = '13px "Prompt", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('กดปุ่ม "Start Mic" ด้านบนเพื่อเริ่มวิเคราะห์สเปกตรัมเสียงและวัดความถี่มูลฐาน (f₀) แบบเรียลไทม์', plotX + plotW / 2, plotY + plotH / 2);
+      }
+
+      // 6. Draw Synchronized Crosshair and Floating FFT Curve Badge
+      if (analyzerState.cursorX !== null && analyzerState.cursorX >= plotX && analyzerState.cursorX <= plotX + plotW) {
+        const curX = analyzerState.cursorX;
+
+        // Vertical guide line across FFT
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.6)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(curX, plotY);
+        ctx.lineTo(curX, plotY + plotH);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Highlight point on Real-Time FFT Line at mouse X position
+        if (sampledFftDbAtCursor !== null && isFinite(sampledFftDbAtCursor)) {
+          const clampedDb = Math.max(MIN_DB, Math.min(MAX_DB, sampledFftDbAtCursor));
+          const fftPointY = plotY + ((MAX_DB - clampedDb) / (MAX_DB - MIN_DB)) * plotH;
+
+          // Floating Target Ring on Live FFT Line
+          ctx.beginPath();
+          ctx.arc(curX, fftPointY, 5, 0, Math.PI * 2);
+          ctx.fillStyle = '#ffffff';
+          ctx.shadowColor = '#22d3ee';
+          ctx.shadowBlur = 10;
+          ctx.fill();
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = '#22d3ee';
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+
+          // Floating Callout Badge attached to Real-time FFT Curve
+          const freq = xRatioToFreq((curX - plotX) / plotW);
+          const probeText = `${freq.toFixed(1)} Hz | ${clampedDb.toFixed(1)} dB`;
+          ctx.font = '700 11px "JetBrains Mono", monospace';
+          const badgeW = ctx.measureText(probeText).width + 14;
+          const badgeX = Math.min(plotX + plotW - badgeW - 6, Math.max(plotX + 6, curX - badgeW / 2));
+          const badgeY = Math.max(plotY + 8, Math.min(plotY + plotH - 26, fftPointY - 26));
+
+          ctx.fillStyle = 'rgba(15, 23, 42, 0.92)';
+          ctx.strokeStyle = '#22d3ee';
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          if (typeof ctx.roundRect === 'function') {
+            ctx.roundRect(badgeX, badgeY, badgeW, 20, 5);
+          } else {
+            ctx.rect(badgeX, badgeY, badgeW, 20);
+          }
+          ctx.fill();
+          ctx.stroke();
+
+          ctx.fillStyle = '#67e8f9';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(probeText, badgeX + badgeW / 2, badgeY + 10);
+        }
+      }
+
+      ctx.restore(); // end clip
+      ctx.restore(); // end dpr scale
+    }
+
+    function drawWaterfallCanvas() {
+      const canvas = hudDom.wfCanvas || document.getElementById('waterfallCanvas');
+      if (!canvas || canvas.width === 0) return;
+
+      const dpr = window.devicePixelRatio || 1;
+      const ctx = hudDom.wfCtx || canvas.getContext('2d');
+      const cssW = canvas.width / dpr;
+      const cssH = canvas.height / dpr;
+
+      ctx.save();
+      ctx.scale(dpr, dpr);
+
+      ctx.fillStyle = '#050811';
+      ctx.fillRect(0, 0, cssW, cssH);
+
+      const plotX = PLOT_MARGIN.left;
+      const plotY = PLOT_MARGIN.topWf;
+      const plotW = Math.max(10, Math.floor(cssW - PLOT_MARGIN.left - PLOT_MARGIN.right));
+      const plotH = Math.max(10, Math.floor(cssH - PLOT_MARGIN.topWf - PLOT_MARGIN.bottomWf));
+
+      // Draw Waterfall Offscreen Image (1.5x time view)
+      if (wfOffscreenA.width > 0 && wfOffscreenA.height > 0) {
+        ctx.drawImage(wfOffscreenA, plotX, plotY, plotW, plotH);
+      }
+
+      // Vertical frequency guides (10 Hz – 20 kHz)
+      const ticks = getFreqGridTicks();
+      ctx.font = '11px "JetBrains Mono", monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+
+      for (let i = 0; i < ticks.length; i++) {
+        const t = ticks[i];
+        const x = plotX + freqToXRatio(t.f) * plotW;
+        ctx.strokeStyle = 'rgba(148, 163, 184, 0.18)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x, plotY);
+        ctx.lineTo(x, plotY + plotH);
+        ctx.stroke();
+
+        ctx.fillStyle = t.f === 1000 ? '#67e8f9' : '#94a3b8';
+        ctx.fillText(`${t.label} Hz`, x, plotY + plotH + 5);
+      }
+
+      // Left Time Axis Label
+      ctx.save();
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '10px "JetBrains Mono", monospace';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'top';
+      ctx.fillText('Now', plotX - 8, plotY + 6);
+      ctx.textBaseline = 'bottom';
+      ctx.fillText('Past ↓ (1.5x)', plotX - 8, plotY + plotH - 4);
+      ctx.restore();
+
+      // Synchronized Cursor Line on Waterfall Spectrogram
+      if (analyzerState.cursorX !== null && analyzerState.cursorX >= plotX && analyzerState.cursorX <= plotX + plotW) {
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.65)';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(analyzerState.cursorX, plotY);
+        ctx.lineTo(analyzerState.cursorX, plotY + plotH);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      ctx.restore();
+    }
+
+    // Interactive Cursor & Touch Probe on FFT & Waterfall Canvases (with Throttled Readout Updates)
+    function bindCanvasCursorEvents() {
+      const fftCanvas = document.getElementById('fftCanvas');
+      const wfCanvas = document.getElementById('waterfallCanvas');
+      const readout = document.getElementById('readoutCursor');
+      const readoutSub = document.getElementById('readoutCursorSub');
+
+      function updateProbeAtClientPoint(targetEl, clientX, clientY, sourceName) {
+        const rect = targetEl.getBoundingClientRect();
+        const x = clientX - rect.left;
+        const y = clientY - rect.top;
+        const plotW = Math.floor(rect.width - PLOT_MARGIN.left - PLOT_MARGIN.right);
+
+        if (x >= PLOT_MARGIN.left && x <= PLOT_MARGIN.left + plotW) {
+          analyzerState.cursorX = x;
+          analyzerState.cursorY = y;
+          analyzerState.cursorCanvas = sourceName;
+
+          const normX = (x - PLOT_MARGIN.left) / Math.max(1, plotW);
+          const freq = xRatioToFreq(normX);
+          analyzerState.cursorTrackedFreq = freq;
+
+          if (analyzerState.freqData && analyzerState.audioCtx) {
+            const sr = analyzerState.audioCtx.sampleRate;
+            analyzerState.cursorTrackedDb = sampleSpectrumAtPixel(
+              analyzerState.freqData,
+              x - PLOT_MARGIN.left,
+              plotW,
+              sr,
+              analyzerState.fftSize
+            );
+          }
+
+          const nowMs = performance.now();
+          if (nowMs - analyzerState.lastCursorHudUpdateTime >= CURSOR_HUD_THROTTLE_MS) {
+            analyzerState.lastCursorHudUpdateTime = nowMs;
+            const freqStr = `${freq.toFixed(1)} Hz`;
+            let dbStr = '--- dB';
+            if (analyzerState.cursorTrackedDb !== null && isFinite(analyzerState.cursorTrackedDb)) {
+              dbStr = `${analyzerState.cursorTrackedDb.toFixed(1)} dBFS`;
+            }
+            setTextIfChanged(readout, `${freqStr} | ${dbStr}`);
+            setTextIfChanged(readoutSub, `Real-Time FFT Level at ${freqStr}`);
+          }
+        } else {
+          analyzerState.cursorX = null;
+          analyzerState.cursorTrackedFreq = null;
+          analyzerState.cursorTrackedDb = null;
+          setTextIfChanged(readout, 'Touch / Hover');
+          setTextIfChanged(readoutSub, 'ชี้เพื่อดู Hz & dB');
+        }
+
+        if (!analyzerState.isMicActive || analyzerState.isPaused) {
+          drawStaticAnalyzerFrames();
+        }
+      }
+
+      function handleLeave() {
+        analyzerState.cursorX = null;
+        analyzerState.cursorY = null;
+        analyzerState.cursorTrackedFreq = null;
+        analyzerState.cursorTrackedDb = null;
+        setTextIfChanged(readout, 'Touch / Hover');
+        setTextIfChanged(readoutSub, 'ชี้เพื่อดู Hz & dB');
+        if (!analyzerState.isMicActive || analyzerState.isPaused) {
+          drawStaticAnalyzerFrames();
+        }
+      }
+
+      function bindSurface(canvasEl, sourceName) {
+        canvasEl.addEventListener('mousemove', (e) =>
+          updateProbeAtClientPoint(canvasEl, e.clientX, e.clientY, sourceName)
+        );
+        canvasEl.addEventListener('mouseleave', handleLeave);
+
+        canvasEl.addEventListener(
+          'touchstart',
+          (e) => {
+            if (e.touches && e.touches.length === 1) {
+              updateProbeAtClientPoint(canvasEl, e.touches[0].clientX, e.touches[0].clientY, sourceName);
+            }
+          },
+          { passive: true }
+        );
+
+        canvasEl.addEventListener(
+          'touchmove',
+          (e) => {
+            if (e.touches && e.touches.length === 1) {
+              updateProbeAtClientPoint(canvasEl, e.touches[0].clientX, e.touches[0].clientY, sourceName);
+            }
+          },
+          { passive: true }
+        );
+      }
+
+      bindSurface(fftCanvas, 'fft');
+      bindSurface(wfCanvas, 'wf');
+    }
+
+    // =========================================================================
+    // 3. TAB 1: CUSTOM GRAPH PLOTTER & DATA LOGGER (With Background Noise Rejection & 1s/2s/3s Auto-Plot)
+    // =========================================================================
+    let analyzerCustomChartInstance = null;
+    let currentAnalyzerChartMode = null;
+
+    function initAnalyzerCustomChart() {
+      updateAnalyzerCustomChart(true);
+    }
+
+    function updateNoiseGateThreshold(val) {
+      const db = parseInt(val, 10);
+      analyzerState.noiseGateDb = db;
+      const lbl = document.getElementById('labelNoiseGateVal');
+      if (lbl) lbl.textContent = `${db} dB`;
+    }
+
+    function calibrateRoomNoiseFloor() {
+      if (!analyzerState.isMicActive || !analyzerState.freqData) {
+        alert('กรุณากดปุ่ม "Start Mic" ขณะอยู่ในสภาพแวดล้อมปกติ เพื่อให้ระบบวัดระดับเสียงรบกวนพื้นหลัง (Background Noise) อัตโนมัติครับ');
+        return;
+      }
+      // Set Noise Gate 8 dB above the current peak/ambient room background noise (in 0–100 dB scale)
+      const currentRoomPeak = Math.max(analyzerState.currentDominantDb, analyzerState.ambientNoiseFloorDb);
+      const recommendedGate = Math.max(20, Math.min(75, Math.round(currentRoomPeak + 8)));
+      analyzerState.noiseGateDb = recommendedGate;
+      analyzerState.ambientNoiseFloorDb = currentRoomPeak;
+      windowCleanPeak.valid = false;
+
+      const slider = document.getElementById('sliderNoiseGate');
+      const lbl = document.getElementById('labelNoiseGateVal');
+      if (slider) slider.value = String(recommendedGate);
+      if (lbl) lbl.textContent = `${recommendedGate} dB`;
+
+      if (hudDom.noiseStatusText) {
+        setTextIfChanged(
+          hudDom.noiseStatusText,
+          `ตั้งค่าเกณฑ์ตัดเสียงรบกวนห้องอัตโนมัติที่ ${recommendedGate} dB สำเร็จ (ระบบจะไม่นำเสียงรบกวนต่ำกว่านี้มาพล็อตกราฟ)`
+        );
+      }
+    }
+
+    function captureSnapshotToTable(isAutoTick = false) {
+      if (!analyzerState.isMicActive) {
+        if (!isAutoTick) {
+          alert('กรุณากดปุ่ม "Start Mic" เพื่อให้ไมโครโฟนรับสัญญาณเสียงก่อนดึงค่า Snapshot หรือกรอกค่าเองในช่องด้านล่างครับ');
+        }
+        return false;
+      }
+
+      const nowMs = performance.now();
+      let hz = 0;
+      let db = 0;
+      let f0 = 0;
+
+      // Strictly reject background noise: only accept a verified clean signal (current frame or within the active interval window)
+      if (analyzerState.isCleanSignal && analyzerState.currentDominantHz >= 25) {
+        hz = analyzerState.currentDominantHz;
+        db = analyzerState.currentDominantDb;
+        f0 =
+          analyzerState.currentF0Hz >= 25 && analyzerState.currentF0Confidence >= 0.5
+            ? analyzerState.currentF0Hz
+            : hz;
+        windowCleanPeak.valid = false;
+      } else if (
+        windowCleanPeak.valid &&
+        nowMs - windowCleanPeak.timestamp <= Math.max(600, analyzerState.autoRecordIntervalSec * 1000 + 250)
+      ) {
+        hz = windowCleanPeak.hz;
+        db = windowCleanPeak.db;
+        f0 = windowCleanPeak.f0 || hz;
+        windowCleanPeak.valid = false;
+      } else {
+        // Background noise only — DO NOT plot onto the graph!
+        if (!isAutoTick) {
+          if (hudDom.noiseStatusText) {
+            setTextIfChanged(
+              hudDom.noiseStatusText,
+              `🛡️ ป้องกันการพล็อตเสียงรบกวน: สัญญาณขณะนี้เป็นเสียงพื้นหลัง/เบาเกินเกณฑ์ Noise Gate (${analyzerState.noiseGateDb} dB)`
+            );
+          }
+        }
+        return false;
+      }
+
+      const idx = analyzerState.recordedRows.length + 1;
+      const nowStr = new Date().toLocaleTimeString('th-TH', { hour12: false });
+      const customName = document.getElementById('inputSampleLabel').value.trim();
+
+      const label = customName ? `${customName} (${nowStr})` : `Sample #${idx} (${nowStr})`;
+      analyzerState.recordedRows.push({
+        id: Date.now() + Math.random(),
+        label,
+        f0: Number((f0 || hz).toFixed(1)),
+        hz: Number(hz.toFixed(1)),
+        db: Number(db.toFixed(1))
+      });
+
+      if (customName && !isAutoTick) document.getElementById('inputSampleLabel').value = '';
+      renderAnalyzerTable();
+      updateAnalyzerCustomChart();
+      return true;
+    }
+
+    function updateAutoPlotButtonsUI() {
+      const sec = analyzerState.autoRecordIntervalSec;
+      const btn05 = document.getElementById('btnAutoPlot05');
+      const btn1 = document.getElementById('btnAutoPlot1');
+      const btn2 = document.getElementById('btnAutoPlot2');
+      const btnStop = document.getElementById('btnAutoRecord');
+      const statusLabel = document.getElementById('autoPlotActiveStatus');
+
+      const activeCls =
+        'w-full px-2.5 py-2 rounded-lg text-[11px] font-bold bg-emerald-600 text-white border border-emerald-700 shadow-sm animate-pulse transition-all text-center leading-tight';
+      const inactiveCls =
+        'w-full px-2.5 py-2 rounded-lg text-[11px] font-bold bg-white hover:bg-purple-50 text-purple-900 border border-purple-300 shadow-sm transition-all text-center leading-tight';
+
+      if (btn05) {
+        btn05.className = sec === 0.5 ? activeCls : inactiveCls;
+        btn05.textContent = 'Plot geaph ทุก 0.5 วินาที';
+      }
+      if (btn1) {
+        btn1.className = sec === 1 ? activeCls : inactiveCls;
+        btn1.textContent = 'Plot geaph ทุก 1 วินาที';
+      }
+      if (btn2) {
+        btn2.className = sec === 2 ? activeCls : inactiveCls;
+        btn2.textContent = 'Plot geaph ทุก 2 วินาที';
+      }
+      if (btnStop) {
+        if (sec > 0) {
+          btnStop.disabled = false;
+          btnStop.className =
+            'w-full px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-rose-600 hover:bg-rose-700 text-white border border-rose-700 transition-all text-center';
+        } else {
+          btnStop.disabled = true;
+          btnStop.className =
+            'w-full px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-slate-200 text-slate-400 border border-slate-300 disabled:opacity-60 disabled:pointer-events-none transition-all text-center';
+        }
+      }
+      if (statusLabel) {
+        if (sec > 0) {
+          statusLabel.textContent = `⏺ กำลังพล็อตทุก ${sec} วินาที`;
+          statusLabel.className = 'text-[11px] font-mono font-bold text-emerald-700';
+        } else if (analyzerState.hasStoppedAutoPlot) {
+          statusLabel.textContent = '⏸ หยุดพล็อตแล้ว (กดปุ่มอีกครั้งเพื่อล้างตารางและเริ่มใหม่)';
+          statusLabel.className = 'text-[11px] font-mono font-semibold text-amber-700';
+        } else {
+          statusLabel.textContent = 'โหมด: บันทึกด้วยตนเอง';
+          statusLabel.className = 'text-[11px] font-mono font-semibold text-purple-700';
+        }
+      }
+    }
+
+    function setAutoPlotInterval(seconds) {
+      if (analyzerState.autoRecordTimer) {
+        clearInterval(analyzerState.autoRecordTimer);
+        analyzerState.autoRecordTimer = null;
+      }
+
+      // If currently auto-plotting, clicking ANY plot button (whether same or different) or stop button stops the current auto-plot
+      if (seconds === 0 || analyzerState.autoRecordIntervalSec > 0) {
+        if (analyzerState.autoRecordIntervalSec > 0) {
+          analyzerState.hasStoppedAutoPlot = true;
+        }
+        analyzerState.autoRecordIntervalSec = 0;
+        windowCleanPeak.valid = false;
+        updateAutoPlotButtonsUI();
+        return;
+      }
+
+      if (!analyzerState.isMicActive) {
+        alert('กรุณาเปิดไมโครโฟน (กดปุ่ม Start Mic) ก่อนเริ่มโหมดตรวจจับเสียงเพื่อพล็อตกราฟอัตโนมัติครับ');
+        analyzerState.autoRecordIntervalSec = 0;
+        updateAutoPlotButtonsUI();
+        return;
+      }
+
+      // Clear all recorded table rows before starting the new auto-plot recording
+      if (analyzerState.hasStoppedAutoPlot || analyzerState.recordedRows.length > 0) {
+        clearAnalyzerTable();
+      }
+      analyzerState.hasStoppedAutoPlot = false;
+      analyzerState.autoRecordIntervalSec = seconds;
+      windowCleanPeak.valid = false;
+      updateAutoPlotButtonsUI();
+
+      analyzerState.autoRecordTimer = setInterval(() => {
+        if (analyzerState.isMicActive && !analyzerState.isPaused) {
+          captureSnapshotToTable(true);
+        }
+      }, seconds * 1000);
+    }
+
+    function toggleAutoRecord() {
+      setAutoPlotInterval(analyzerState.autoRecordIntervalSec ? 0 : 1);
+    }
+
+    function addManualAnalyzerRow() {
+      const labelEl = document.getElementById('inputSampleLabel');
+      const f0El = document.getElementById('inputSampleF0');
+      const hzEl = document.getElementById('inputSampleHz');
+      const dbEl = document.getElementById('inputSampleDb');
+
+      const rawF0 = f0El ? parseFloat(f0El.value) : NaN;
+      const rawHz = parseFloat(hzEl.value);
+      const db = parseFloat(dbEl.value);
+
+      const hasF0 = !isNaN(rawF0) && rawF0 > 0;
+      const hasHz = !isNaN(rawHz) && rawHz > 0;
+
+      if ((!hasF0 && !hasHz) || isNaN(db)) {
+        alert('กรุณากรอกค่าความถี่มูลฐาน (f₀) หรือความถี่ (Hz) พร้อมความดัง (dB) เป็นตัวเลขให้ครบถ้วนครับ');
+        return;
+      }
+
+      const finalF0 = hasF0 ? rawF0 : rawHz;
+      const finalHz = hasHz ? rawHz : rawF0;
+      const idx = analyzerState.recordedRows.length + 1;
+      const label = labelEl.value.trim() || `Trial #${idx}`;
+
+      analyzerState.recordedRows.push({
+        id: Date.now() + Math.random(),
+        label,
+        f0: Number(finalF0.toFixed(1)),
+        hz: Number(finalHz.toFixed(1)),
+        db: Number(db.toFixed(1))
+      });
+
+      labelEl.value = '';
+      if (f0El) f0El.value = '';
+      hzEl.value = '';
+      dbEl.value = '';
+
+      renderAnalyzerTable();
+      updateAnalyzerCustomChart();
+    }
+
+    function loadSampleAnalyzerData() {
+      analyzerState.recordedRows = [
+        { id: 1, label: 'Tuning Fork A4', f0: 440.0, hz: 440.0, db: 75.5 },
+        { id: 2, label: 'Guitar Open E4', f0: 329.6, hz: 329.6, db: 80.8 },
+        { id: 3, label: 'Flute C5', f0: 523.3, hz: 523.3, db: 83.2 },
+        { id: 4, label: 'Flute G5', f0: 784.0, hz: 784.0, db: 85.9 },
+        { id: 5, label: 'Whistle C6', f0: 1046.5, hz: 1046.5, db: 88.4 }
+      ];
+      renderAnalyzerTable();
+      updateAnalyzerCustomChart();
+    }
+
+    function deleteAnalyzerRow(id) {
+      analyzerState.recordedRows = analyzerState.recordedRows.filter((r) => r.id !== id);
+      renderAnalyzerTable();
+      updateAnalyzerCustomChart();
+    }
+
+    function clearAnalyzerTable() {
+      analyzerState.recordedRows = [];
+      renderAnalyzerTable();
+      updateAnalyzerCustomChart();
+    }
+
+    function renderAnalyzerTable() {
+      const tbody = document.getElementById('analyzerTableBody');
+      const countEl = document.getElementById('analyzerRowCount');
+      countEl.textContent = analyzerState.recordedRows.length;
+
+      if (analyzerState.recordedRows.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" class="h-[190px] text-center align-middle text-purple-900/60 font-sans">
+              ยังไม่มีข้อมูล กดปุ่ม <span class="text-purple-700 font-semibold">"Capture Snapshot"</span> หรือเลือกจับเวลาด้านบน
+            </td>
+          </tr>`;
+        return;
+      }
+
+      tbody.innerHTML = analyzerState.recordedRows
+        .map(
+          (row, idx) => `
+          <tr class="hover:bg-purple-100/60 transition-colors">
+            <td class="py-2 px-2.5 text-purple-900/70 font-semibold truncate">${idx + 1}</td>
+            <td class="py-2 px-2 font-sans text-purple-950 font-medium truncate" title="${escapeHtml(row.label)}">${escapeHtml(row.label)}</td>
+            <td class="py-2 px-2 text-right text-emerald-700 font-bold truncate">${row.f0 ? row.f0.toFixed(1) : '-'}</td>
+            <td class="py-2 px-2 text-right text-purple-900 font-bold truncate">${row.hz.toFixed(1)}</td>
+            <td class="py-2 px-2 text-right text-rose-600 font-bold truncate">${row.db.toFixed(1)}</td>
+            <td class="py-2 px-1.5 text-center">
+              <button onclick="deleteAnalyzerRow(${row.id})" class="text-slate-400 hover:text-rose-600 px-1 font-bold">✕</button>
+            </td>
+          </tr>`
+        )
+        .join('');
+
+      // Keep newest row visible inside fixed-height scroll container without changing table dimensions
+      const scrollBox = tbody.closest('.overflow-y-auto');
+      if (scrollBox) {
+        scrollBox.scrollTop = scrollBox.scrollHeight;
+      }
+    }
+
+    function updateAnalyzerCustomChart(forceRecreate = false) {
+      const canvas = document.getElementById('analyzerCustomChart');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      const mode = document.getElementById('selectAnalyzerChartMode').value;
+      const rows = analyzerState.recordedRows;
+      const labels = rows.map((r) => r.label);
+
+      let chartType = 'line';
+      let chartData = { labels, datasets: [] };
+      const scales = {
+        x: {
+          title: { display: true, text: 'การทดลอง / ลำดับเวลา (Samples)', color: '#475569', font: { family: 'Prompt, sans-serif' } },
+          ticks: { color: '#475569', font: { family: 'Prompt, sans-serif', size: 11 } },
+          grid: { color: 'rgba(216, 199, 234, 0.45)' }
+        },
+        y: {
+          title: { display: true, text: 'Value', color: '#475569', font: { family: 'Prompt, sans-serif' } },
+          ticks: { color: '#475569', font: { family: 'JetBrains Mono, monospace', size: 11 } },
+          grid: { color: 'rgba(216, 199, 234, 0.45)' }
+        }
+      };
+
+      if (mode === 'line_freq') {
+        chartType = 'line';
+        scales.y.title.text = 'Frequency (Hz)';
+        chartData = {
+          labels,
+          datasets: [
+            {
+              label: 'Peak Frequency (Hz)',
+              data: rows.map((r) => r.hz),
+              borderColor: '#8e5fb3',
+              backgroundColor: 'rgba(142, 95, 179, 0.15)',
+              fill: true,
+              tension: 0.25,
+              pointRadius: 5,
+              pointBackgroundColor: '#8e5fb3'
+            },
+            {
+              label: 'Fundamental Frequency f₀ (Hz)',
+              data: rows.map((r) => r.f0 || r.hz),
+              borderColor: '#059669',
+              backgroundColor: '#059669',
+              borderDash: [5, 4],
+              tension: 0.25,
+              pointRadius: 5,
+              pointBackgroundColor: '#059669'
+            }
+          ]
+        };
+      } else if (mode === 'bar_db') {
+        chartType = 'bar';
+        scales.y.title.text = 'Sound Level (0dB ถึง 100dBFS)';
+        scales.y.min = 0;
+        scales.y.max = 100;
+        chartData = {
+          labels,
+          datasets: [
+            {
+              label: 'Sound Level (dBFS)',
+              data: rows.map((r) => r.db),
+              base: 0,
+              backgroundColor: 'rgba(225, 29, 72, 0.75)',
+              borderColor: '#be123c',
+              borderWidth: 1.5,
+              borderRadius: 6
+            }
+          ]
+        };
+      } else if (mode === 'bar_freq') {
+        chartType = 'bar';
+        scales.y.title.text = 'Frequency (Hz)';
+        chartData = {
+          labels,
+          datasets: [
+            {
+              label: 'Peak Frequency (Hz)',
+              data: rows.map((r) => r.hz),
+              backgroundColor: 'rgba(142, 95, 179, 0.7)',
+              borderColor: '#754897',
+              borderWidth: 1.5,
+              borderRadius: 6
+            },
+            {
+              label: 'Fundamental f₀ (Hz)',
+              data: rows.map((r) => r.f0 || r.hz),
+              backgroundColor: 'rgba(16, 185, 129, 0.7)',
+              borderColor: '#059669',
+              borderWidth: 1.5,
+              borderRadius: 6
+            }
+          ]
+        };
+      } else if (mode === 'line_dual') {
+        chartType = 'line';
+        scales.y.title.text = 'Frequency (Hz)';
+        scales.y1 = {
+          position: 'right',
+          title: { display: true, text: 'Level (0–100 dBFS)', color: '#be123c' },
+          ticks: { color: '#be123c', font: { family: 'JetBrains Mono, monospace' } },
+          grid: { drawOnChartArea: false }
+        };
+        chartData = {
+          labels,
+          datasets: [
+            {
+              label: 'Peak Frequency (Hz)',
+              data: rows.map((r) => r.hz),
+              yAxisID: 'y',
+              borderColor: '#8e5fb3',
+              backgroundColor: '#8e5fb3',
+              tension: 0.25,
+              pointRadius: 4
+            },
+            {
+              label: 'Sound Level (dBFS)',
+              data: rows.map((r) => r.db),
+              yAxisID: 'y1',
+              borderColor: '#be123c',
+              backgroundColor: '#be123c',
+              borderDash: [5, 4],
+              tension: 0.25,
+              pointRadius: 4
+            }
+          ]
+        };
+      } else if (mode === 'scatter_freq_db') {
+        chartType = 'scatter';
+        scales.x = {
+          type: 'linear',
+          title: { display: true, text: 'Frequency (Hz)', color: '#475569' },
+          ticks: { color: '#475569', font: { family: 'JetBrains Mono, monospace' } },
+          grid: { color: 'rgba(216, 199, 234, 0.45)' }
+        };
+        scales.y.title.text = 'Level (0–100 dBFS)';
+        chartData = {
+          datasets: [
+            {
+              label: 'Frequency vs Level (Hz, dBFS)',
+              data: rows.map((r) => ({ x: r.hz, y: r.db, label: r.label })),
+              backgroundColor: '#d97706',
+              borderColor: '#b45309',
+              pointRadius: 6,
+              pointHoverRadius: 8
+            }
+          ]
+        };
+      }
+
+      // Update existing chart instance in-place without destroying/resizing canvas when mode is unchanged
+      if (!forceRecreate && analyzerCustomChartInstance && currentAnalyzerChartMode === mode) {
+        analyzerCustomChartInstance.data.labels = chartData.labels || [];
+        analyzerCustomChartInstance.data.datasets = chartData.datasets;
+        analyzerCustomChartInstance.update('none');
+        return;
+      }
+
+      if (analyzerCustomChartInstance) {
+        analyzerCustomChartInstance.destroy();
+        analyzerCustomChartInstance = null;
+      }
+      currentAnalyzerChartMode = mode;
+
+      analyzerCustomChartInstance = new Chart(ctx, {
+        type: chartType,
+        data: chartData,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: false,
+          interaction: { mode: mode === 'scatter_freq_db' ? 'nearest' : 'index', intersect: false },
+          plugins: {
+            legend: {
+              labels: { color: '#2b1739', font: { family: 'Prompt, sans-serif', size: 12, weight: 'bold' } }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(43, 23, 57, 0.95)',
+              borderColor: '#a77dc9',
+              borderWidth: 1,
+              titleColor: '#f3eef8',
+              bodyColor: '#ffffff',
+              bodyFont: { family: 'JetBrains Mono, monospace' }
+            }
+          },
+          scales
+        }
+      });
+    }
+
+    function exportAnalyzerCsv() {
+      if (analyzerState.recordedRows.length === 0) {
+        alert('ยังไม่มีข้อมูลในตารางสำหรับส่งออก CSV ครับ');
+        return;
+      }
+      const header = ['Index', 'Label', 'Fundamental_F0_Hz', 'Peak_Frequency_Hz', 'Level_dBFS', 'Nearest_Pitch'];
+      const lines = analyzerState.recordedRows.map((r, i) => [
+        i + 1,
+        `"${String(r.label).replace(/"/g, '""')}"`,
+        (r.f0 || 0).toFixed(2),
+        r.hz.toFixed(2),
+        r.db.toFixed(2),
+        `"${freqToNoteString(r.hz)}"`
+      ]);
+      const csvContent = '\uFEFF' + [header.join(','), ...lines.map((l) => l.join(','))].join('\r\n');
+      triggerBlobDownload(csvContent, 'text/csv;charset=utf-8;', 'audio-spectrum-f0-data.csv');
+    }
+
+    // =========================================================================
+    // 4. TAB 2: INTERACTIVE HEARING TEST & EQUAL-LOUDNESS CONTOUR (UNSW)
+    // =========================================================================
+    const hearingState = {
+      audioCtx: null,
+      masterGainNode: null,
+      pannerNode: null,
+      fallbackLeftGain: null,
+      fallbackRightGain: null,
+      activeVoice: null,
+      calibVolumePercent: 20,
+      earPan: 0,
+      isCalibPlaying: false,
+      mobileQuickFreq: 1000,
+      mobileQuickDb: 60,
+      selectedPoints: {},
+      savedCurves: []
+    };
+
+    let hearingChartInstance = null;
+
+    function ensureHearingAudioGraph() {
+      configureMobileAudioSession('playback');
+      if (!hearingState.audioCtx || hearingState.audioCtx.state === 'closed') {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        hearingState.audioCtx = ctx;
+        hearingState.masterGainNode = ctx.createGain();
+        hearingState.masterGainNode.gain.value = calibPercentToLinearGain(hearingState.calibVolumePercent);
+
+        if (typeof ctx.createStereoPanner === 'function') {
+          hearingState.pannerNode = ctx.createStereoPanner();
+          hearingState.pannerNode.pan.value = hearingState.earPan;
+          hearingState.pannerNode.connect(hearingState.masterGainNode);
+        } else {
+          const inputGain = ctx.createGain();
+          const leftGain = ctx.createGain();
+          const rightGain = ctx.createGain();
+          const merger = ctx.createChannelMerger(2);
+
+          inputGain.connect(leftGain);
+          inputGain.connect(rightGain);
+          leftGain.connect(merger, 0, 0);
+          rightGain.connect(merger, 0, 1);
+          merger.connect(hearingState.masterGainNode);
+
+          hearingState.pannerNode = inputGain;
+          hearingState.fallbackLeftGain = leftGain;
+          hearingState.fallbackRightGain = rightGain;
+          applyFallbackEarPan(hearingState.earPan);
+        }
+
+        hearingState.masterGainNode.connect(ctx.destination);
+      }
+      unlockAndResumeAudioContext(hearingState.audioCtx);
+    }
+
+    async function cleanupHearingAudio() {
+      stopHearingTone(false);
+      if (hearingState.pannerNode) {
+        try { hearingState.pannerNode.disconnect(); } catch (_) {}
+        hearingState.pannerNode = null;
+      }
+      if (hearingState.fallbackLeftGain) {
+        try { hearingState.fallbackLeftGain.disconnect(); } catch (_) {}
+        hearingState.fallbackLeftGain = null;
+      }
+      if (hearingState.fallbackRightGain) {
+        try { hearingState.fallbackRightGain.disconnect(); } catch (_) {}
+        hearingState.fallbackRightGain = null;
+      }
+      if (hearingState.masterGainNode) {
+        try { hearingState.masterGainNode.disconnect(); } catch (_) {}
+        hearingState.masterGainNode = null;
+      }
+      if (hearingState.audioCtx) {
+        const oldCtx = hearingState.audioCtx;
+        hearingState.audioCtx = null;
+        try {
+          if (oldCtx.state !== 'closed') {
+            await oldCtx.close();
+          }
+        } catch (_) {}
+      }
+    }
+
+    function applyFallbackEarPan(pan) {
+      if (!hearingState.fallbackLeftGain || !hearingState.fallbackRightGain) return;
+      hearingState.fallbackLeftGain.gain.value = pan <= 0 ? 1.0 : 0.0;
+      hearingState.fallbackRightGain.gain.value = pan >= 0 ? 1.0 : 0.0;
+    }
+
+    function calibPercentToLinearGain(percent) {
+      const norm = Math.max(0.01, Math.min(1, percent / 100));
+      return 0.85 * Math.pow(norm, 1.8);
+    }
+
+    function updateCalibrationVolume(val) {
+      const pct = parseInt(val, 10);
+      hearingState.calibVolumePercent = pct;
+      document.getElementById('labelCalibVol').textContent = `${pct}%`;
+
+      if (hearingState.masterGainNode && hearingState.audioCtx) {
+        const now = hearingState.audioCtx.currentTime;
+        const target = calibPercentToLinearGain(pct);
+        hearingState.masterGainNode.gain.cancelScheduledValues(now);
+        hearingState.masterGainNode.gain.setTargetAtTime(target, now, 0.015);
+      }
+    }
+
+    function updateEarPanning(val) {
+      const pan = parseFloat(val);
+      hearingState.earPan = pan;
+
+      const sel = document.getElementById('selectEarChannel');
+      if (sel && String(sel.value) !== String(pan)) {
+        sel.value = String(pan);
+      }
+
+      const btnLeft = document.getElementById('btnEarLeft');
+      const btnBoth = document.getElementById('btnEarBoth');
+      const btnRight = document.getElementById('btnEarRight');
+      const badge = document.getElementById('earChannelActiveBadge');
+
+      const activeBtnClass =
+        'ear-chan-btn flex flex-col items-center justify-center py-2 px-2 rounded-xl border-2 text-xs sm:text-sm font-extrabold transition-all bg-purple-700 text-white border-purple-900 shadow-[0_4px_14px_rgba(117,72,151,0.4)] ring-2 ring-purple-300 active:scale-95';
+      const inactiveBtnClass =
+        'ear-chan-btn flex flex-col items-center justify-center py-2 px-2 rounded-xl border-2 text-xs sm:text-sm font-extrabold transition-all bg-white hover:bg-purple-50 text-purple-900 border-purple-300 shadow-sm active:scale-95';
+
+      if (btnLeft) btnLeft.className = pan < 0 ? activeBtnClass : inactiveBtnClass;
+      if (btnBoth) btnBoth.className = pan === 0 ? activeBtnClass : inactiveBtnClass;
+      if (btnRight) btnRight.className = pan > 0 ? activeBtnClass : inactiveBtnClass;
+
+      if (badge) {
+        if (pan < 0) {
+          badge.textContent = '◀ หูซ้าย (Left Only)';
+          badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-mono font-extrabold bg-indigo-700 text-white shadow-sm';
+        } else if (pan > 0) {
+          badge.textContent = 'หูขวา (Right Only) ▶';
+          badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-mono font-extrabold bg-rose-600 text-white shadow-sm';
+        } else {
+          badge.textContent = 'สองข้าง (Both L+R)';
+          badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-mono font-extrabold bg-purple-700 text-white shadow-sm';
+        }
+      }
+
+      if (hearingState.pannerNode && hearingState.audioCtx) {
+        if (hearingState.pannerNode.pan) {
+          const now = hearingState.audioCtx.currentTime;
+          hearingState.pannerNode.pan.setTargetAtTime(pan, now, 0.015);
+        } else {
+          applyFallbackEarPan(pan);
+        }
+      }
+    }
+
+    // Pure Sine Tone Generator with Click-Free ADSR Fade-in / Fade-out Envelope & Auto-Disconnect
+    function playHearingTone(freqHz, levelDb, durationModeOverride = null) {
+      ensureHearingAudioGraph();
+      stopHearingTone(true);
+
+      const ctx = hearingState.audioCtx;
+      const now = ctx.currentTime;
+
+      const osc = ctx.createOscillator();
+      const envGain = ctx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freqHz, now);
+
+      // Map 0dB..90dB scale to relative attenuation -90dB..0dB (where 90 dB = 0 dB ceiling)
+      const relAttenDb = levelDb < 0 ? levelDb : levelDb - 90;
+      const targetAmp = Math.pow(10, relAttenDb / 20);
+
+      // 30ms linear attack envelope
+      const attackTime = 0.03;
+      envGain.gain.setValueAtTime(0.0, now);
+      envGain.gain.linearRampToValueAtTime(targetAmp, now + attackTime);
+
+      osc.connect(envGain);
+      envGain.connect(hearingState.pannerNode);
+
+      // Guarantee OscillatorNode & GainNode disconnection when tone stops to prevent memory leaks
+      osc.onended = () => {
+        try {
+          osc.disconnect();
+          envGain.disconnect();
+        } catch (_) {}
+        if (hearingState.activeVoice && hearingState.activeVoice.osc === osc) {
+          if (hearingState.activeVoice.stopTimeout) {
+            clearTimeout(hearingState.activeVoice.stopTimeout);
+          }
+          hearingState.activeVoice = null;
+          hearingState.isCalibPlaying = false;
+          updateHearingToneUI();
+        }
+      };
+
+      osc.start(now);
+
+      const mode = durationModeOverride || document.getElementById('selectToneDurationMode').value;
+      let stopTimeout = null;
+
+      if (mode === 'pulse') {
+        const sustainTime = 0.82;
+        const releaseTime = 0.045;
+        envGain.gain.setValueAtTime(targetAmp, now + attackTime + sustainTime);
+        envGain.gain.linearRampToValueAtTime(0.0, now + attackTime + sustainTime + releaseTime);
+        osc.stop(now + attackTime + sustainTime + releaseTime + 0.02);
+
+        stopTimeout = setTimeout(() => {
+          try {
+            osc.disconnect();
+            envGain.disconnect();
+          } catch (_) {}
+          if (hearingState.activeVoice && hearingState.activeVoice.osc === osc) {
+            hearingState.activeVoice = null;
+            hearingState.isCalibPlaying = false;
+            updateHearingToneUI();
+          }
+        }, (attackTime + sustainTime + releaseTime) * 1000 + 35);
+      }
+
+      hearingState.activeVoice = { osc, envGain, freq: freqHz, db: levelDb, stopTimeout };
+      updateHearingToneUI();
+    }
+
+    function stopHearingTone(silentUI = false) {
+      if (hearingState.activeVoice && hearingState.audioCtx) {
+        const { osc, envGain, stopTimeout } = hearingState.activeVoice;
+        if (stopTimeout) clearTimeout(stopTimeout);
+
+        const ctx = hearingState.audioCtx;
+        const now = ctx.currentTime;
+        const releaseTime = 0.035;
+
+        try {
+          const curVal = Math.max(0.0, envGain.gain.value);
+          if (typeof envGain.gain.cancelAndHoldAtTime === 'function') {
+            envGain.gain.cancelAndHoldAtTime(now);
+          } else {
+            envGain.gain.cancelScheduledValues(now);
+            envGain.gain.setValueAtTime(curVal, now);
+          }
+          envGain.gain.linearRampToValueAtTime(0.0, now + releaseTime);
+          osc.stop(now + releaseTime + 0.015);
+          setTimeout(() => {
+            try {
+              osc.disconnect();
+              envGain.disconnect();
+            } catch (_) {}
+          }, (releaseTime + 0.04) * 1000);
+        } catch (_) {}
+
+        hearingState.activeVoice = null;
+      }
+
+      hearingState.isCalibPlaying = false;
+      if (!silentUI) {
+        updateHearingToneUI();
+      }
+    }
+
+    function toggleCalibrationTone() {
+      if (hearingState.isCalibPlaying) {
+        stopHearingTone();
+      } else {
+        playHearingTone(1000, 70, 'sustain');
+        hearingState.isCalibPlaying = true;
+        updateHearingToneUI();
+      }
+    }
+
+    function playReference1kHz() {
+      const refDb = hearingState.selectedPoints[1000] !== undefined ? hearingState.selectedPoints[1000] : 60;
+      playHearingTone(1000, refDb, 'pulse');
+    }
+
+    function updateHearingToneUI() {
+      const dot = document.getElementById('toneActiveDot');
+      const txt = document.getElementById('toneStatusText');
+      const btnCalib = document.getElementById('btnCalibTone');
+
+      document.querySelectorAll('.matrix-cell.playing-cell').forEach((el) => el.classList.remove('playing-cell'));
+
+      if (hearingState.activeVoice) {
+        const { freq, db } = hearingState.activeVoice;
+        dot.className = 'w-2 h-2 rounded-full bg-amber-500 animate-live-dot';
+        txt.textContent = `Playing: ${freq} Hz @ ${db} dB`;
+
+        const activeCell = document.getElementById(`cell-${freq}-${db}`);
+        if (activeCell) activeCell.classList.add('playing-cell');
+      } else {
+        dot.className = 'w-2 h-2 rounded-full bg-slate-400';
+        txt.textContent = 'Tone: Silent';
+      }
+
+      if (hearingState.isCalibPlaying) {
+        btnCalib.textContent = '■ หยุดเสียงเทียบ 1 kHz';
+        btnCalib.className =
+          'flex-1 px-4 py-3 rounded-xl text-xs sm:text-sm font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-sm transition-all';
+      } else {
+        btnCalib.textContent = '▶ เล่นเสียงเทียบ 1 kHz (70 dB)';
+        btnCalib.className =
+          'flex-1 px-4 py-3 rounded-xl text-xs sm:text-sm font-bold bg-amber-500 hover:bg-amber-600 text-white shadow-sm transition-all';
+      }
+    }
+
+    // Build 19x19 Interactive UNSW Frequency-Level Grid (0dB ถึง 90dB)
+    function buildUnswMatrixGrid() {
+      const container = document.getElementById('unswGridContainer');
+      const formatFreqHeader = (f) => (f >= 1000 ? `${f / 1000}k` : `${f}`);
+
+      let html = `<table class="w-full border-collapse text-center font-mono text-[11px]">`;
+
+      // Header Row (19 UNSW Frequencies)
+      html += `<thead><tr>`;
+      html += `<th class="sticky left-0 z-20 bg-purple-100/95 py-2 px-2 text-right text-purple-950 font-bold border-b border-r border-purple-300 w-16">dB \\ Hz</th>`;
+      UNSW_FREQUENCIES.forEach((f) => {
+        const isRef = f === 1000;
+        html += `<th id="col-header-${f}" class="py-2 px-1 border-b border-purple-300 ${
+          isRef ? 'text-purple-950 bg-purple-200/90 font-extrabold' : 'text-purple-900 font-semibold'
+        }">
+          ${formatFreqHeader(f)}${isRef ? ' ★' : ''}
+        </th>`;
+      });
+      html += `</tr></thead><tbody>`;
+
+      // 19 Level Rows (90 dB down to 0 dB -> 0dB ถึง 90dB)
+      ATTENUATION_STEPS.forEach((db) => {
+        const isLoudZone = db >= 80;
+        html += `<tr>`;
+        html += `<td class="sticky left-0 z-20 bg-purple-100/95 py-1 px-2 text-right font-bold border-r border-purple-300 ${
+          isLoudZone ? 'text-amber-800' : 'text-purple-900/80'
+        }">${db === 90 || db === 0 ? `${db} dB` : `${db}`}</td>`;
+
+        UNSW_FREQUENCIES.forEach((f) => {
+          const isRefCol = f === 1000;
+          const baseBg = isLoudZone
+            ? 'bg-amber-50/80 border-amber-200 text-amber-900 font-medium'
+            : isRefCol
+            ? 'bg-purple-100/80 border-purple-300 text-purple-950 font-medium'
+            : 'bg-white border-purple-200/80 text-purple-900';
+
+          html += `<td class="p-0.5">
+            <button
+              id="cell-${f}-${db}"
+              type="button"
+              data-freq="${f}"
+              data-db="${db}"
+              class="matrix-cell w-full py-1.5 rounded border text-[10px] ${baseBg}"
+              title="${f} Hz at ${db} dB"
+            >${db}</button>
+          </td>`;
+        });
+
+        html += `</tr>`;
+      });
+
+      html += `</tbody></table>`;
+      container.innerHTML = html;
+
+      // Attach scroll-safe mobile & desktop handlers
+      container.querySelectorAll('.matrix-cell').forEach((btn) => {
+        const freq = parseInt(btn.dataset.freq, 10);
+        const db = parseInt(btn.dataset.db, 10);
+
+        btn.addEventListener('click', () => {
+          const durMode = document.getElementById('selectToneDurationMode').value;
+          const clickMode = document.getElementById('selectGridClickMode').value;
+
+          hearingState.mobileQuickFreq = freq;
+          hearingState.mobileQuickDb = db;
+
+          if (durMode !== 'hold') {
+            playHearingTone(freq, db, durMode);
+          }
+
+          if (clickMode === 'play_and_mark') {
+            toggleSelectHearingPoint(freq, db);
+          } else {
+            syncMobileQuickPadUI();
+          }
+        });
+
+        btn.addEventListener('pointerdown', (e) => {
+          if (e.button !== undefined && e.button !== 0) return;
+          const durMode = document.getElementById('selectToneDurationMode').value;
+          if (durMode === 'hold') {
+            hearingState.mobileQuickFreq = freq;
+            hearingState.mobileQuickDb = db;
+            playHearingTone(freq, db, 'sustain');
+            syncMobileQuickPadUI();
+          }
+        });
+
+        const endHoldTone = () => {
+          const durMode = document.getElementById('selectToneDurationMode').value;
+          if (durMode === 'hold' && hearingState.activeVoice && hearingState.activeVoice.freq === freq) {
+            stopHearingTone();
+          }
+        };
+
+        btn.addEventListener('pointerup', endHoldTone);
+        btn.addEventListener('pointerleave', endHoldTone);
+        btn.addEventListener('pointercancel', endHoldTone);
+
+        btn.addEventListener('dblclick', () => {
+          const clickMode = document.getElementById('selectGridClickMode').value;
+          if (clickMode === 'play_only') {
+            toggleSelectHearingPoint(freq, db);
+          }
+        });
+      });
+    }
+
+    // Mobile Quick-Pad Controller (Synchronized with 2D Matrix Grid)
+    function initMobileQuickPad() {
+      const sel = document.getElementById('selectMobileQuickFreq');
+      if (!sel) return;
+      sel.innerHTML = UNSW_FREQUENCIES.map(
+        (f) => `<option value="${f}" ${f === 1000 ? 'selected' : ''}>${f} Hz${f === 1000 ? ' ★ (Ref)' : ''}</option>`
+      ).join('');
+      syncMobileQuickPadUI();
+    }
+
+    function syncMobileQuickPadUI() {
+      const sel = document.getElementById('selectMobileQuickFreq');
+      const dbEl = document.getElementById('displayMobileQuickDb');
+      const statusEl = document.getElementById('mobileQuickPinStatus');
+      if (!sel || !dbEl || !statusEl) return;
+
+      const freq = hearingState.mobileQuickFreq;
+      const db = hearingState.mobileQuickDb;
+
+      sel.value = String(freq);
+      dbEl.textContent = `${db} dB`;
+
+      const pinnedDb = hearingState.selectedPoints[freq];
+      if (pinnedDb !== undefined) {
+        statusEl.textContent = `${freq} Hz: ปักหมุดที่ ${pinnedDb} dB ✓`;
+        statusEl.className = 'text-[11px] font-mono text-emerald-700 font-bold';
+      } else {
+        statusEl.textContent = `${freq} Hz: ยังไม่ได้ปักหมุด`;
+        statusEl.className = 'text-[11px] font-mono text-purple-800/80';
+      }
+    }
+
+    function setMobileQuickFreq(val) {
+      const freq = parseInt(val, 10);
+      if (!UNSW_FREQUENCIES.includes(freq)) return;
+      hearingState.mobileQuickFreq = freq;
+      if (hearingState.selectedPoints[freq] !== undefined) {
+        hearingState.mobileQuickDb = hearingState.selectedPoints[freq];
+      }
+      syncMobileQuickPadUI();
+      scrollMatrixToFreq(freq);
+      playHearingTone(hearingState.mobileQuickFreq, hearingState.mobileQuickDb, 'pulse');
+    }
+
+    function stepMobileFreq(delta) {
+      const curIdx = UNSW_FREQUENCIES.indexOf(hearingState.mobileQuickFreq);
+      const nextIdx = Math.max(0, Math.min(UNSW_FREQUENCIES.length - 1, curIdx + delta));
+      setMobileQuickFreq(UNSW_FREQUENCIES[nextIdx]);
+    }
+
+    function stepMobileDb(deltaDb) {
+      const nextDb = Math.max(0, Math.min(90, hearingState.mobileQuickDb + deltaDb));
+      hearingState.mobileQuickDb = nextDb;
+      syncMobileQuickPadUI();
+      playHearingTone(hearingState.mobileQuickFreq, hearingState.mobileQuickDb, 'pulse');
+    }
+
+    function playMobileQuickTone() {
+      playHearingTone(hearingState.mobileQuickFreq, hearingState.mobileQuickDb, 'pulse');
+    }
+
+    function pinMobileQuickPoint() {
+      const freq = hearingState.mobileQuickFreq;
+      const db = hearingState.mobileQuickDb;
+      hearingState.selectedPoints[freq] = db;
+      refreshMatrixSelectionHighlights();
+      updateHearingChart();
+      syncMobileQuickPadUI();
+      scrollMatrixToFreq(freq);
+    }
+
+    function scrollMatrixToFreq(freq) {
+      const wrapper = document.getElementById('unswGridScrollWrapper');
+      const headerCell = document.getElementById(`col-header-${freq}`);
+      if (!wrapper || !headerCell) return;
+      const targetLeft =
+        headerCell.offsetLeft - wrapper.clientWidth / 2 + headerCell.clientWidth / 2;
+      wrapper.scrollTo({ left: Math.max(0, targetLeft), behavior: 'smooth' });
+    }
+
+    function toggleSelectHearingPoint(freq, db) {
+      if (hearingState.selectedPoints[freq] === db) {
+        delete hearingState.selectedPoints[freq];
+      } else {
+        hearingState.selectedPoints[freq] = db;
+      }
+      refreshMatrixSelectionHighlights();
+      syncMobileQuickPadUI();
+      updateHearingChart();
+    }
+
+    function refreshMatrixSelectionHighlights() {
+      document.querySelectorAll('.matrix-cell.selected-cell').forEach((el) => el.classList.remove('selected-cell'));
+
+      let count = 0;
+      UNSW_FREQUENCIES.forEach((f) => {
+        const db = hearingState.selectedPoints[f];
+        if (db !== undefined) {
+          count++;
+          const el = document.getElementById(`cell-${f}-${db}`);
+          if (el) el.classList.add('selected-cell');
+        }
+      });
+
+      document.getElementById('selectedCountLabel').textContent = `เลือกแล้ว: ${count} / ${UNSW_FREQUENCIES.length} ความถี่`;
+    }
+
+    function clearCurrentHearingSelection() {
+      hearingState.selectedPoints = {};
+      refreshMatrixSelectionHighlights();
+      syncMobileQuickPadUI();
+      updateHearingChart();
+    }
+
+    // Fletcher-Munson reference curve on white background (0dB ถึง 90dB scale)
+    function getIsoReferenceContourDataset() {
+      const refMap = {
+        30: 80, 45: 70, 60: 62, 90: 54, 125: 48, 180: 44, 250: 40,
+        375: 37, 500: 35, 750: 34, 1000: 35, 1500: 34, 2000: 30,
+        3000: 27, 4000: 28, 6000: 36, 8000: 42, 12000: 50, 16000: 68
+      };
+      return {
+        label: 'Typical Fletcher-Munson Trend (Reference)',
+        data: UNSW_FREQUENCIES.map((f) => ({ x: f, y: refMap[f] })),
+        borderColor: '#64748b',
+        backgroundColor: 'transparent',
+        borderDash: [6, 4],
+        borderWidth: 2,
+        pointRadius: 2,
+        tension: 0.35
+      };
+    }
+
+    // =========================================================================
+    // EQUAL-LOUDNESS CHART: WHITE BACKGROUND + BLACK FONTS (0dB ถึง 90dB)
+    // =========================================================================
+    function initHearingChart() {
+      const ctx = document.getElementById('hearingCurveChart').getContext('2d');
+      hearingChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: { datasets: [] },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: { mode: 'nearest', intersect: false },
+          plugins: {
+            legend: {
+              labels: {
+                color: '#000000',
+                font: { family: 'Prompt, sans-serif', size: 12, weight: 'bold' },
+                usePointStyle: true,
+                padding: 16
+              }
+            },
+            tooltip: {
+              backgroundColor: '#000000',
+              borderColor: '#6b7280',
+              borderWidth: 1,
+              titleColor: '#ffffff',
+              bodyColor: '#ffffff',
+              bodyFont: { family: 'JetBrains Mono, monospace', weight: 'bold' },
+              callbacks: {
+                title: (items) => (items.length ? `Frequency: ${items[0].parsed.x} Hz` : ''),
+                label: (item) => `${item.dataset.label}: ${item.parsed.y} dB`
+              }
+            }
+          },
+          scales: {
+            x: {
+              type: 'logarithmic',
+              min: 25,
+              max: 18000,
+              title: {
+                display: true,
+                text: 'Frequency (Hz) — Logarithmic Scale',
+                color: '#000000',
+                font: { family: 'Prompt, sans-serif', size: 12, weight: 'bold' }
+              },
+              ticks: {
+                color: '#000000',
+                font: { family: 'JetBrains Mono, monospace', size: 11, weight: 'bold' },
+                callback: function (val) {
+                  if (UNSW_FREQUENCIES.includes(val)) {
+                    return val >= 1000 ? `${val / 1000}k` : `${val}`;
+                  }
+                  return null;
+                },
+                autoSkip: false,
+                maxRotation: 45
+              },
+              afterBuildTicks: (axis) => {
+                axis.ticks = UNSW_FREQUENCIES.map((v) => ({ value: v }));
+              },
+              grid: { color: 'rgba(0, 0, 0, 0.12)', lineWidth: 1 }
+            },
+            y: {
+              min: 0,
+              max: 90,
+              title: {
+                display: true,
+                text: 'Relative Level / Sound Level (0dB ถึง 90dB)',
+                color: '#000000',
+                font: { family: 'Prompt, sans-serif', size: 12, weight: 'bold' }
+              },
+              ticks: {
+                stepSize: 10,
+                color: '#000000',
+                font: { family: 'JetBrains Mono, monospace', size: 11, weight: 'bold' },
+                callback: (v) => `${v} dB`
+              },
+              grid: { color: 'rgba(0, 0, 0, 0.12)', lineWidth: 1 }
+            }
+          }
+        }
+      });
+
+      updateHearingChart();
+    }
+
+    function pointsMapToChartData(pointsMap) {
+      const arr = [];
+      UNSW_FREQUENCIES.forEach((f) => {
+        if (pointsMap[f] !== undefined) {
+          arr.push({ x: f, y: pointsMap[f] });
+        }
+      });
+      return arr;
+    }
+
+    function updateHearingChart() {
+      if (!hearingChartInstance) return;
+      const datasets = [];
+
+      // 1. Active Live Selection Curve (High contrast Indigo on White Background)
+      const activeData = pointsMapToChartData(hearingState.selectedPoints);
+      datasets.push({
+        label: 'เส้นปัจจุบัน (Current Active Test)',
+        data: activeData,
+        borderColor: '#4338ca',
+        backgroundColor: 'rgba(67, 56, 202, 0.12)',
+        borderWidth: 3,
+        pointRadius: 6,
+        pointHoverRadius: 8,
+        pointBackgroundColor: '#4338ca',
+        pointBorderColor: '#ffffff',
+        tension: 0.25
+      });
+
+      // 2. Saved Comparison Curves (Contrasted for White Canvas)
+      hearingState.savedCurves.forEach((curve) => {
+        if (!curve.visible) return;
+        datasets.push({
+          label: curve.name,
+          data: pointsMapToChartData(curve.points),
+          borderColor: curve.color,
+          backgroundColor: curve.color,
+          borderWidth: 2.5,
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          tension: 0.25
+        });
+      });
+
+      // 3. Optional Fletcher-Munson Reference Shape
+      if (document.getElementById('chkShowIsoRef').checked) {
+        datasets.push(getIsoReferenceContourDataset());
+      }
+
+      hearingChartInstance.data.datasets = datasets;
+      hearingChartInstance.update();
+    }
+
+    function saveCurrentHearingCurve() {
+      const selectedKeys = Object.keys(hearingState.selectedPoints);
+      if (selectedKeys.length === 0) {
+        alert('กรุณาคลิกเลือกจุดระดับเสียงในตารางอย่างน้อย 1 ความถี่ก่อนกด Save Curve ครับ');
+        return;
+      }
+
+      const inputEl = document.getElementById('inputCurveName');
+      const idx = hearingState.savedCurves.length + 1;
+      const earLabel =
+        hearingState.earPan < 0 ? 'Left Ear' : hearingState.earPan > 0 ? 'Right Ear' : 'Both Ears';
+      const name = inputEl.value.trim() || `Curve #${idx} (${earLabel})`;
+      const color = CURVE_PALETTE[(idx - 1) % CURVE_PALETTE.length];
+
+      hearingState.savedCurves.push({
+        id: Date.now() + Math.random(),
+        name,
+        color,
+        visible: true,
+        points: { ...hearingState.selectedPoints }
+      });
+
+      inputEl.value = '';
+      renderSavedCurvesList();
+      updateHearingChart();
+    }
+
+    function toggleSavedCurveVisibility(id) {
+      const c = hearingState.savedCurves.find((item) => item.id === id);
+      if (c) {
+        c.visible = !c.visible;
+        renderSavedCurvesList();
+        updateHearingChart();
+      }
+    }
+
+    function deleteSavedCurve(id) {
+      hearingState.savedCurves = hearingState.savedCurves.filter((item) => item.id !== id);
+      renderSavedCurvesList();
+      updateHearingChart();
+    }
+
+    function clearAllHearingCurves() {
+      hearingState.selectedPoints = {};
+      hearingState.savedCurves = [];
+      refreshMatrixSelectionHighlights();
+      syncMobileQuickPadUI();
+      renderSavedCurvesList();
+      updateHearingChart();
+    }
+
+    function renderSavedCurvesList() {
+      const listEl = document.getElementById('savedCurvesList');
+      const countEl = document.getElementById('savedCurvesCount');
+      countEl.textContent = hearingState.savedCurves.length;
+
+      if (hearingState.savedCurves.length === 0) {
+        listEl.innerHTML = `
+          <p class="text-xs text-purple-900/60 py-6 text-center">
+            ยังไม่มีเส้นกราฟที่บันทึก<br />เลือกจุดในตารางแล้วกด <strong>"Save Curve"</strong> เพื่อเทียบหลายการทดลอง
+          </p>`;
+        return;
+      }
+
+      listEl.innerHTML = hearingState.savedCurves
+        .map(
+          (c) => `
+          <div class="flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-white border border-purple-200 text-xs shadow-sm">
+            <label class="flex items-center gap-2 cursor-pointer truncate">
+              <input
+                type="checkbox"
+                ${c.visible ? 'checked' : ''}
+                onchange="toggleSavedCurveVisibility(${c.id})"
+                class="rounded bg-white border-purple-300 text-purple-700"
+              />
+              <span class="w-3 h-3 rounded-full shrink-0" style="background:${c.color}"></span>
+              <span class="text-purple-950 font-bold truncate" title="${escapeHtml(c.name)}">${escapeHtml(c.name)}</span>
+            </label>
+            <button
+              onclick="deleteSavedCurve(${c.id})"
+              class="text-slate-400 hover:text-rose-600 px-1 shrink-0 font-bold"
+              title="ลบเส้นกราฟนี้"
+            >✕</button>
+          </div>`
+        )
+        .join('');
+    }
+
+    function exportHearingCsv() {
+      const hasCurrent = Object.keys(hearingState.selectedPoints).length > 0;
+      if (!hasCurrent && hearingState.savedCurves.length === 0) {
+        alert('ยังไม่มีข้อมูลเส้นกราฟการได้ยินสำหรับส่งออก CSV ครับ');
+        return;
+      }
+
+      const headers = [
+        'Frequency_Hz',
+        ...(hasCurrent ? ['Current_Active_dB'] : []),
+        ...hearingState.savedCurves.map((c) => `"${String(c.name).replace(/"/g, '""')}_dB"`)
+      ];
+
+      const rows = UNSW_FREQUENCIES.map((f) => {
+        const cols = [f];
+        if (hasCurrent) {
+          cols.push(hearingState.selectedPoints[f] !== undefined ? hearingState.selectedPoints[f] : '');
+        }
+        hearingState.savedCurves.forEach((c) => {
+          cols.push(c.points[f] !== undefined ? c.points[f] : '');
+        });
+        return cols.join(',');
+      });
+
+      const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\r\n');
+      triggerBlobDownload(csvContent, 'text/csv;charset=utf-8;', 'hearing-contour-unsw.csv');
+    }
+
+    // =========================================================================
+    // 5. SHARED UTILITIES & LIFECYCLE INITIALIZATION
+    // =========================================================================
+    function downloadChartImage(canvasId, filename) {
+      const canvas = document.getElementById(canvasId);
+      if (!canvas) return;
+
+      // Ensure crisp export with background
+      const exportCanvas = document.createElement('canvas');
+      exportCanvas.width = canvas.width;
+      exportCanvas.height = canvas.height;
+      const expCtx = exportCanvas.getContext('2d');
+
+      // For hearing curve, strictly white background; for others, clean white background
+      expCtx.fillStyle = '#ffffff';
+      expCtx.fillRect(0, 0, exportCanvas.width, exportCanvas.height);
+      expCtx.drawImage(canvas, 0, 0);
+
+      const link = document.createElement('a');
+      link.download = filename;
+      link.href = exportCanvas.toDataURL('image/png', 1.0);
+      link.click();
+    }
+
+    function triggerBlobDownload(content, mimeType, filename) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    // Global Spacebar Emergency Stop for Tone Generator (when not typing in text inputs)
+    window.addEventListener('keydown', (e) => {
+      const tag = document.activeElement ? document.activeElement.tagName : '';
+      if (e.code === 'Space' && tag !== 'INPUT' && tag !== 'TEXTAREA' && tag !== 'SELECT') {
+        if (hearingState.activeVoice) {
+          e.preventDefault();
+          stopHearingTone();
+        }
+      }
+    });
+
+    function handleViewportResize() {
+      resizeAnalyzerCanvases();
+      if (!analyzerState.isMicActive || analyzerState.isPaused) {
+        drawStaticAnalyzerFrames();
+      }
+      if (analyzerCustomChartInstance) analyzerCustomChartInstance.resize();
+      if (hearingChartInstance) hearingChartInstance.resize();
+    }
+
+    window.addEventListener('resize', handleViewportResize);
+    window.addEventListener('orientationchange', () => {
+      setTimeout(handleViewportResize, 150);
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && hearingState.activeVoice) {
+        stopHearingTone();
+      }
+    });
+
+    // Clean up all Web Audio contexts, nodes, and media streams on page unload
+    window.addEventListener('pagehide', () => {
+      cleanupAnalyzerAudio();
+      cleanupHearingAudio();
+    });
+    window.addEventListener('beforeunload', () => {
+      cleanupAnalyzerAudio();
+      cleanupHearingAudio();
+    });
+
+    // Initialize Application on DOM Ready
+    window.addEventListener('DOMContentLoaded', () => {
+      initHudDomCache();
+      bindReusableAnalyzerBuffers(analyzerState.fftSize);
+      resizeAnalyzerCanvases();
+      drawStaticAnalyzerFrames();
+      bindCanvasCursorEvents();
+      initAnalyzerCustomChart();
+
+      buildUnswMatrixGrid();
+      initMobileQuickPad();
+      initHearingChart();
+    });
+  </script>
+</body>
+</html>
