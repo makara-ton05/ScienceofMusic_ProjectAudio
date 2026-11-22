@@ -831,25 +831,81 @@
 
           <!-- Right Column: Interactive Chart.js Plotter (Fixed Size Container so chart never resizes during plotting) -->
           <div class="lg:col-span-7 glass-subpanel rounded-xl p-4 flex flex-col justify-between space-y-3">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <label for="selectAnalyzerChartMode" class="text-xs font-bold text-purple-950">
-                รูปแบบกราฟเปรียบเทียบ (Chart Mode):
-              </label>
-              <select
-                id="selectAnalyzerChartMode"
-                onchange="updateAnalyzerCustomChart(true)"
-                class="bg-white border border-purple-300 rounded-lg px-3 py-1.5 text-xs text-purple-950 font-medium focus:outline-none focus:border-purple-600 shadow-sm"
-              >
-                <option value="line_freq">กราฟเส้น: การเปลี่ยนแปลงความถี่หลักและ f₀ ตามเวลา (Hz vs Sample)</option>
-                <option value="bar_db">กราฟแท่ง: เปรียบเทียบระดับความดังในแต่ละการทดลอง (dB Comparison)</option>
-                <option value="bar_freq">กราฟแท่ง: เปรียบเทียบความถี่ในแต่ละการทดลอง (Hz Comparison)</option>
-                <option value="line_dual">กราฟเส้นคู่: เปรียบเทียบทั้งความถี่ (Hz) และความดัง (dB)</option>
-                <option value="scatter_freq_db">กราฟจุด XY: ความถี่ (Hz) เทียบกับความดัง (dB)</option>
-              </select>
+            <!-- Top Bar: Chart Mode Selector + Linear Regression & R² Function Buttons Beside It -->
+            <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-2.5">
+              <div class="flex flex-col sm:flex-row sm:items-center gap-2 flex-1 min-w-0">
+                <label for="selectAnalyzerChartMode" class="text-xs font-bold text-purple-950 whitespace-nowrap shrink-0">
+                  รูปแบบกราฟเปรียบเทียบ:
+                </label>
+                <select
+                  id="selectAnalyzerChartMode"
+                  onchange="updateAnalyzerCustomChart(true)"
+                  class="w-full flex-1 min-w-0 bg-white border border-purple-300 rounded-lg px-2.5 py-1.5 text-xs text-purple-950 font-medium focus:outline-none focus:border-purple-600 shadow-sm truncate"
+                >
+                  <option value="line_freq">กราฟเส้น: การเปลี่ยนแปลงความถี่หลักและ f₀ ตามเวลา (Hz vs Sample)</option>
+                  <option value="bar_db">กราฟแท่ง: เปรียบเทียบระดับความดังในแต่ละการทดลอง (dB Comparison)</option>
+                  <option value="bar_freq">กราฟแท่ง: เปรียบเทียบความถี่ในแต่ละการทดลอง (Hz Comparison)</option>
+                  <option value="line_dual">กราฟเส้นคู่: เปรียบเทียบทั้งความถี่ (Hz) และความดัง (dB)</option>
+                  <option value="scatter_freq_db">กราฟจุด XY: ความถี่ (Hz) เทียบกับความดัง (dB)</option>
+                </select>
+              </div>
+
+              <!-- Function Buttons Beside Chart Selector: Linear Equation (y = mx + c) & R Square -->
+              <div class="flex flex-wrap sm:flex-nowrap items-center gap-1.5 shrink-0">
+                <button
+                  id="btnCalcLinearEq"
+                  type="button"
+                  onclick="toggleCalculateLinearEquation()"
+                  class="flex-1 sm:flex-none px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-white hover:bg-purple-50 text-purple-900 border border-purple-300 shadow-sm transition-all whitespace-nowrap"
+                  title="คำนวณและแสดงสมการเส้นตรงแนวโน้ม (Linear Regression: y = mx + c)"
+                >
+                  📈 การคำนวณค่าสมการเส้นตรง (เช่น y = mx + c)
+                </button>
+                <button
+                  id="btnCalcRSquare"
+                  type="button"
+                  onclick="toggleCalculateRSquare()"
+                  class="flex-1 sm:flex-none px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-white hover:bg-purple-50 text-purple-900 border border-purple-300 shadow-sm transition-all whitespace-nowrap"
+                  title="คำนวณและแสดงค่าสัมประสิทธิ์การตัดสินใจ (R Square / R²)"
+                >
+                  📊 คำนวณค่า R square
+                </button>
+              </div>
             </div>
 
-            <div class="relative w-full h-[380px] min-h-[380px] max-h-[380px] bg-white rounded-xl p-2 border border-purple-200 shadow-inner overflow-hidden">
+            <!-- Fixed-Size Chart Container -->
+            <div class="relative w-full h-[335px] min-h-[335px] max-h-[335px] bg-white rounded-xl p-2 border border-purple-200 shadow-inner overflow-hidden">
               <canvas id="analyzerCustomChart" class="w-full h-full block"></canvas>
+            </div>
+
+            <!-- Bottom Regression & R² Result Display Box (Below Comparison Graph) -->
+            <div
+              id="analyzerRegressionResultBox"
+              class="rounded-xl bg-white/90 border border-purple-300/90 px-3.5 py-2.5 shadow-sm min-h-[64px] flex flex-col justify-center space-y-1"
+            >
+              <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
+                <span class="font-bold text-purple-950 flex items-center gap-1.5">
+                  <span class="w-2 h-2 rounded-full bg-purple-600"></span>
+                  ผลลัพธ์การวิเคราะห์เชิงเส้น (Linear Regression &amp; R² Analysis)
+                </span>
+                <span id="regressionAxisHint" class="text-[11px] font-mono text-purple-700">
+                  กดปุ่มด้านบนเพื่อแสดงสมการเส้นตรง (y = mx + c) และค่า R square
+                </span>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-0.5">
+                <div class="rounded-lg bg-purple-50/90 border border-purple-200 px-3 py-1.5 flex items-center justify-between gap-2">
+                  <span class="text-[11px] font-bold text-purple-900 whitespace-nowrap">สมการเส้นตรง (y = mx + c):</span>
+                  <span id="readoutLinearEquation" class="text-xs font-mono font-bold text-emerald-700 truncate text-right">
+                    -- (กดปุ่มคำนวณสมการเส้นตรง)
+                  </span>
+                </div>
+                <div class="rounded-lg bg-purple-50/90 border border-purple-200 px-3 py-1.5 flex items-center justify-between gap-2">
+                  <span class="text-[11px] font-bold text-purple-900 whitespace-nowrap">ค่า R square (R²):</span>
+                  <span id="readoutRSquareValue" class="text-xs font-mono font-bold text-indigo-700 truncate text-right">
+                    -- (กดปุ่มคำนวณค่า R square)
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1462,7 +1518,9 @@
       recordedRows: [],
       autoRecordTimer: null,
       autoRecordIntervalSec: 0,
-      hasStoppedAutoPlot: false
+      hasStoppedAutoPlot: false,
+      showLinearEquation: false,
+      showRSquare: false
     };
 
     // Cached DOM References & Dirty-Checked DOM Setters (Prevents Layout Thrashing)
@@ -3332,6 +3390,186 @@
       }
     }
 
+    // Ordinary Least Squares (OLS) Linear Regression (y = mx + c) & Coefficient of Determination (R²)
+    function computeLinearRegressionAndR2(points) {
+      const n = points ? points.length : 0;
+      if (n < 2) {
+        return { valid: false, m: 0, c: 0, r2: 0, equation: '', r2Text: '' };
+      }
+
+      let sumX = 0;
+      let sumY = 0;
+      for (let i = 0; i < n; i++) {
+        sumX += points[i].x;
+        sumY += points[i].y;
+      }
+      const meanX = sumX / n;
+      const meanY = sumY / n;
+
+      let sxx = 0;
+      let syy = 0;
+      let sxy = 0;
+      for (let i = 0; i < n; i++) {
+        const dx = points[i].x - meanX;
+        const dy = points[i].y - meanY;
+        sxx += dx * dx;
+        syy += dy * dy;
+        sxy += dx * dy;
+      }
+
+      if (sxx < 1e-12) {
+        return {
+          valid: true,
+          m: 0,
+          c: meanY,
+          r2: syy < 1e-12 ? 1 : 0,
+          equation: `y = 0x ${meanY >= 0 ? '+' : '-'} ${Math.abs(meanY).toFixed(2)}`,
+          r2Text: `R² = ${(syy < 1e-12 ? 1 : 0).toFixed(4)}`
+        };
+      }
+
+      const m = sxy / sxx;
+      const c = meanY - m * meanX;
+
+      let ssr = 0;
+      for (let i = 0; i < n; i++) {
+        const yHat = m * points[i].x + c;
+        const err = points[i].y - yHat;
+        ssr += err * err;
+      }
+
+      const r2 = syy < 1e-12 ? 1.0 : Math.max(0, Math.min(1, 1 - ssr / syy));
+      const mFormatted = Math.abs(m) > 0 && Math.abs(m) < 0.01 ? m.toFixed(4) : m.toFixed(3);
+      const cFormatted = Math.abs(c).toFixed(2);
+      const signC = c >= 0 ? '+' : '-';
+      const equation = `y = ${mFormatted}x ${signC} ${cFormatted}`;
+      const r2Text = `R² = ${r2.toFixed(4)}`;
+
+      return { valid: true, m, c, r2, equation, r2Text };
+    }
+
+    function getChartModeRegressionPoints(mode, rows) {
+      if (!rows || rows.length === 0) {
+        return { points: [], axisHint: 'X: ลำดับการทดลอง (x), Y: ค่าที่วัดได้ (y)', label: 'Trendline' };
+      }
+      if (mode === 'scatter_freq_db') {
+        return {
+          points: rows.map((r) => ({ x: r.hz, y: r.db })),
+          axisHint: 'ตัวแปร: x = ความถี่ Peak (Hz), y = ความดัง (dBFS)',
+          label: 'สมการเส้นตรง (y = mx + c)'
+        };
+      }
+      if (mode === 'bar_db') {
+        return {
+          points: rows.map((r, idx) => ({ x: idx + 1, y: r.db })),
+          axisHint: 'ตัวแปร: x = ลำดับการทดลอง (1..n), y = ความดัง (dBFS)',
+          label: 'แนวโน้มเส้นตรง Level (y = mx + c)'
+        };
+      }
+      if (mode === 'line_freq' || mode === 'bar_freq' || mode === 'line_dual') {
+        return {
+          points: rows.map((r, idx) => ({ x: idx + 1, y: r.hz })),
+          secondaryPoints: rows.map((r, idx) => ({
+            x: idx + 1,
+            y: mode === 'line_dual' ? r.db : r.f0 || r.hz
+          })),
+          secondaryLabel: mode === 'line_dual' ? 'Level (dB)' : 'f₀ (Hz)',
+          axisHint:
+            mode === 'line_dual'
+              ? 'ตัวแปร: x = ลำดับการทดลอง (1..n), y₁ = Peak (Hz), y₂ = Level (dBFS)'
+              : 'ตัวแปร: x = ลำดับการทดลอง (1..n), y₁ = Peak (Hz), y₂ = f₀ (Hz)',
+          label: 'แนวโน้มเส้นตรง Peak Hz (y = mx + c)'
+        };
+      }
+      return {
+        points: rows.map((r, idx) => ({ x: idx + 1, y: r.hz })),
+        axisHint: 'ตัวแปร: x = ลำดับการทดลอง (1..n), y = ความถี่ (Hz)',
+        label: 'สมการเส้นตรง (y = mx + c)'
+      };
+    }
+
+    function updateRegressionAndRSquareUI() {
+      const btnEq = document.getElementById('btnCalcLinearEq');
+      const btnR2 = document.getElementById('btnCalcRSquare');
+      const eqEl = document.getElementById('readoutLinearEquation');
+      const r2El = document.getElementById('readoutRSquareValue');
+      const hintEl = document.getElementById('regressionAxisHint');
+
+      const activeBtnCls =
+        'flex-1 sm:flex-none px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-700 shadow-sm transition-all whitespace-nowrap';
+      const inactiveBtnCls =
+        'flex-1 sm:flex-none px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-white hover:bg-purple-50 text-purple-900 border border-purple-300 shadow-sm transition-all whitespace-nowrap';
+
+      if (btnEq) {
+        btnEq.className = analyzerState.showLinearEquation ? activeBtnCls : inactiveBtnCls;
+      }
+      if (btnR2) {
+        btnR2.className = analyzerState.showRSquare ? activeBtnCls : inactiveBtnCls;
+      }
+
+      const modeEl = document.getElementById('selectAnalyzerChartMode');
+      const mode = modeEl ? modeEl.value : 'line_freq';
+      const rows = analyzerState.recordedRows;
+      const regInfo = getChartModeRegressionPoints(mode, rows);
+
+      if (hintEl) {
+        hintEl.textContent = regInfo.axisHint;
+      }
+
+      const primaryReg = computeLinearRegressionAndR2(regInfo.points);
+      const secondaryReg = regInfo.secondaryPoints
+        ? computeLinearRegressionAndR2(regInfo.secondaryPoints)
+        : null;
+
+      if (eqEl) {
+        if (!analyzerState.showLinearEquation) {
+          eqEl.textContent = '-- (กดปุ่มคำนวณสมการเส้นตรง)';
+          eqEl.className = 'text-xs font-mono font-medium text-slate-400 truncate text-right';
+        } else if (!primaryReg.valid) {
+          eqEl.textContent = 'ต้องมีข้อมูลอย่างน้อย 2 รายการ';
+          eqEl.className = 'text-xs font-mono font-semibold text-amber-700 truncate text-right';
+        } else {
+          const eqStr =
+            secondaryReg && secondaryReg.valid
+              ? `Peak: ${primaryReg.equation} | ${regInfo.secondaryLabel}: ${secondaryReg.equation}`
+              : primaryReg.equation;
+          eqEl.textContent = eqStr;
+          eqEl.title = eqStr;
+          eqEl.className = 'text-xs font-mono font-bold text-emerald-700 truncate text-right';
+        }
+      }
+
+      if (r2El) {
+        if (!analyzerState.showRSquare) {
+          r2El.textContent = '-- (กดปุ่มคำนวณค่า R square)';
+          r2El.className = 'text-xs font-mono font-medium text-slate-400 truncate text-right';
+        } else if (!primaryReg.valid) {
+          r2El.textContent = 'ต้องมีข้อมูลอย่างน้อย 2 รายการ';
+          r2El.className = 'text-xs font-mono font-semibold text-amber-700 truncate text-right';
+        } else {
+          const r2Str =
+            secondaryReg && secondaryReg.valid
+              ? `Peak: ${primaryReg.r2Text} | ${regInfo.secondaryLabel}: ${secondaryReg.r2Text}`
+              : `${primaryReg.r2Text} (${(primaryReg.r2 * 100).toFixed(1)}%)`;
+          r2El.textContent = r2Str;
+          r2El.title = r2Str;
+          r2El.className = 'text-xs font-mono font-bold text-indigo-700 truncate text-right';
+        }
+      }
+
+      return { primaryReg, secondaryReg, regInfo };
+    }
+
+    function toggleCalculateLinearEquation() {
+      analyzerState.showLinearEquation = !analyzerState.showLinearEquation;
+      updateAnalyzerCustomChart(true);
+    }
+
+    function toggleCalculateRSquare() {
+      analyzerState.showRSquare = !analyzerState.showRSquare;
+      updateRegressionAndRSquareUI();
+    }
+
     function updateAnalyzerCustomChart(forceRecreate = false) {
       const canvas = document.getElementById('analyzerCustomChart');
       if (!canvas) return;
@@ -3340,6 +3578,8 @@
       const mode = document.getElementById('selectAnalyzerChartMode').value;
       const rows = analyzerState.recordedRows;
       const labels = rows.map((r) => r.label);
+
+      const { primaryReg, regInfo } = updateRegressionAndRSquareUI();
 
       let chartType = 'line';
       let chartData = { labels, datasets: [] };
@@ -3481,6 +3721,42 @@
             }
           ]
         };
+      }
+
+      // Overlay Linear Regression Trendline (y = mx + c) on the chart when enabled
+      if (analyzerState.showLinearEquation && primaryReg.valid) {
+        if (mode === 'scatter_freq_db') {
+          const xs = rows.map((r) => r.hz);
+          const minX = Math.min(...xs);
+          const maxX = Math.max(...xs);
+          chartData.datasets.push({
+            type: 'line',
+            label: `${regInfo.label}: ${primaryReg.equation}`,
+            data: [
+              { x: minX, y: Number((primaryReg.m * minX + primaryReg.c).toFixed(2)) },
+              { x: maxX, y: Number((primaryReg.m * maxX + primaryReg.c).toFixed(2)) }
+            ],
+            borderColor: '#dc2626',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            borderDash: [6, 4],
+            pointRadius: 0,
+            tension: 0
+          });
+        } else {
+          chartData.datasets.push({
+            type: 'line',
+            label: `${regInfo.label}: ${primaryReg.equation}`,
+            data: rows.map((_, idx) => Number((primaryReg.m * (idx + 1) + primaryReg.c).toFixed(2))),
+            yAxisID: 'y',
+            borderColor: '#dc2626',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            borderDash: [6, 4],
+            pointRadius: 2,
+            tension: 0
+          });
+        }
       }
 
       // Update existing chart instance in-place without destroying/resizing canvas when mode is unchanged
