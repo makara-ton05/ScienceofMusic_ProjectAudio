@@ -274,12 +274,186 @@
       white-space: nowrap;
       overflow: hidden;
     }
+
+    /* =======================================================================
+       DARK THEME: Deep Purple Comfort Edition ("ธีมมืด" สีม่วงเข้มดูสบายตา)
+       ======================================================================= */
+    body.theme-dark {
+      color-scheme: dark;
+      background-color: #150c24;
+      background-image:
+        radial-gradient(circle at 12% 15%, rgba(139, 92, 246, 0.2) 0%, transparent 45%),
+        radial-gradient(circle at 88% 18%, rgba(168, 85, 247, 0.16) 0%, transparent 45%),
+        radial-gradient(circle at 50% 85%, rgba(109, 40, 217, 0.22) 0%, transparent 60%),
+        linear-gradient(to bottom, #1b102e, #150c25 50%, #10081d);
+      color: #f3eef8;
+    }
+
+    body.theme-dark header.safe-top-header {
+      background: rgba(24, 14, 41, 0.9) !important;
+      border-color: rgba(139, 92, 246, 0.35) !important;
+      box-shadow: 0 8px 24px -6px rgba(5, 2, 12, 0.7);
+    }
+
+    body.theme-dark .glass-panel {
+      background: rgba(34, 20, 56, 0.86);
+      border: 1px solid rgba(147, 112, 219, 0.36);
+      box-shadow: 0 14px 34px -10px rgba(6, 3, 14, 0.72), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+    }
+
+    body.theme-dark .glass-subpanel {
+      background: rgba(46, 28, 74, 0.85);
+      border: 1px solid rgba(159, 122, 234, 0.34);
+      box-shadow: 0 6px 16px -4px rgba(6, 3, 14, 0.55);
+    }
+
+    /* Text Contrast in Deep Purple Dark Theme */
+    body.theme-dark .text-purple-950,
+    body.theme-dark .text-purple-900 {
+      color: #f5f0ff !important;
+    }
+    body.theme-dark .text-purple-950\/90,
+    body.theme-dark .text-purple-900\/90,
+    body.theme-dark .text-purple-900\/80,
+    body.theme-dark .text-purple-900\/70,
+    body.theme-dark .text-purple-800,
+    body.theme-dark .text-purple-800\/80,
+    body.theme-dark .text-purple-700,
+    body.theme-dark .text-purple-700\/80 {
+      color: #d8c4f8 !important;
+    }
+    body.theme-dark .text-purple-900\/60,
+    body.theme-dark .text-slate-500,
+    body.theme-dark .text-slate-400 {
+      color: #b79ce2 !important;
+    }
+    body.theme-dark .text-indigo-900,
+    body.theme-dark .text-indigo-700,
+    body.theme-dark .text-indigo-600 {
+      color: #a5b4fc !important;
+    }
+    body.theme-dark .text-emerald-800,
+    body.theme-dark .text-emerald-700 {
+      color: #6ee7b7 !important;
+    }
+    body.theme-dark .text-rose-700,
+    body.theme-dark .text-rose-600 {
+      color: #fda4af !important;
+    }
+    body.theme-dark .text-amber-800,
+    body.theme-dark .text-amber-700 {
+      color: #fcd34d !important;
+    }
+
+    /* Brand Title Gradient in Dark Theme */
+    body.theme-dark h1.bg-clip-text {
+      background-image: linear-gradient(to right, #f5f0ff, #d8b4fe, #a5b4fc) !important;
+    }
+
+    /* Surface & Card Backgrounds in Dark Theme (Excluding Medical White Chart Canvas) */
+    body.theme-dark .bg-white:not(.preserve-white-chart),
+    body.theme-dark .bg-white\/90:not(.preserve-white-chart),
+    body.theme-dark .bg-white\/80:not(.preserve-white-chart),
+    body.theme-dark .bg-white\/70:not(.preserve-white-chart) {
+      background-color: rgba(36, 22, 60, 0.92) !important;
+      color: #f3eef8 !important;
+    }
+    body.theme-dark .bg-purple-50\/90,
+    body.theme-dark .bg-purple-50\/70,
+    body.theme-dark .bg-purple-100,
+    body.theme-dark .bg-purple-100\/80,
+    body.theme-dark .bg-purple-100\/75,
+    body.theme-dark .bg-purple-100\/70,
+    body.theme-dark .bg-purple-100\/60,
+    body.theme-dark .bg-purple-100\/50,
+    body.theme-dark .bg-purple-100\/95 {
+      background-color: rgba(54, 33, 88, 0.88) !important;
+    }
+    body.theme-dark .bg-purple-200,
+    body.theme-dark .bg-purple-200\/90 {
+      background-color: rgba(88, 52, 142, 0.85) !important;
+    }
+    body.theme-dark .bg-amber-50\/75,
+    body.theme-dark .bg-amber-50\/80,
+    body.theme-dark .bg-amber-50 {
+      background-color: rgba(72, 42, 30, 0.55) !important;
+    }
+    body.theme-dark .bg-amber-200\/90,
+    body.theme-dark .bg-amber-100 {
+      background-color: rgba(146, 64, 14, 0.65) !important;
+      color: #fef3c7 !important;
+    }
+    body.theme-dark .bg-rose-50,
+    body.theme-dark .bg-rose-100 {
+      background-color: rgba(136, 19, 55, 0.55) !important;
+      color: #ffe4e6 !important;
+    }
+    body.theme-dark .bg-emerald-50,
+    body.theme-dark .bg-emerald-100 {
+      background-color: rgba(6, 95, 70, 0.55) !important;
+      color: #d1fae5 !important;
+    }
+    body.theme-dark .bg-slate-200 {
+      background-color: rgba(51, 39, 74, 0.9) !important;
+      color: #a792c8 !important;
+      border-color: rgba(109, 83, 150, 0.5) !important;
+    }
+
+    /* Ear Channel Gradient Box in Dark Theme */
+    body.theme-dark .from-purple-100\/90 {
+      background-image: linear-gradient(to right, rgba(58, 34, 94, 0.92), rgba(42, 24, 70, 0.92), rgba(49, 34, 92, 0.92)) !important;
+    }
+
+    /* Borders & Dividers in Dark Theme */
+    body.theme-dark .border-purple-200,
+    body.theme-dark .border-purple-200\/80,
+    body.theme-dark .border-purple-200\/90,
+    body.theme-dark .border-purple-300,
+    body.theme-dark .border-purple-300\/90,
+    body.theme-dark .border-amber-200\/90,
+    body.theme-dark .border-amber-200\/80,
+    body.theme-dark .border-amber-200 {
+      border-color: rgba(147, 112, 219, 0.35) !important;
+    }
+    body.theme-dark .divide-purple-200\/60 > :not([hidden]) ~ :not([hidden]) {
+      border-color: rgba(147, 112, 219, 0.25) !important;
+    }
+
+    /* Form Controls (Inputs & Selects) in Dark Theme */
+    body.theme-dark input[type="text"],
+    body.theme-dark input[type="number"],
+    body.theme-dark select {
+      background-color: #211338 !important;
+      color: #f5f0ff !important;
+      border-color: rgba(159, 122, 234, 0.45) !important;
+    }
+    body.theme-dark input::placeholder {
+      color: #a68bc9 !important;
+    }
+
+    /* Range Slider Track in Dark Theme */
+    body.theme-dark input[type="range"]::-webkit-slider-runnable-track {
+      background: rgba(88, 56, 135, 0.85);
+      border-color: rgba(159, 122, 234, 0.4);
+    }
+    body.theme-dark input[type="range"]::-moz-range-track {
+      background: rgba(88, 56, 135, 0.85);
+      border-color: rgba(159, 122, 234, 0.4);
+    }
+
+    /* Scrollbar in Dark Theme */
+    body.theme-dark ::-webkit-scrollbar-track {
+      background: rgba(29, 17, 48, 0.85);
+    }
+    body.theme-dark ::-webkit-scrollbar-thumb {
+      background: rgba(124, 86, 182, 0.7);
+    }
   </style>
 </head>
 
-<body class="font-sans antialiased selection:bg-purple-300 selection:text-purple-900">
+<body class="font-sans antialiased selection:bg-purple-300 selection:text-purple-900 transition-colors duration-300">
   <!-- Top Scientific Header & Navigation -->
-  <header class="safe-top-header sticky top-0 z-40 border-b border-purple-200/80 bg-white/80 backdrop-blur-xl shadow-sm">
+  <header class="safe-top-header sticky top-0 z-40 border-b border-purple-200/80 bg-white/80 backdrop-blur-xl shadow-sm transition-colors duration-300">
     <div class="max-w-[1440px] mx-auto px-3.5 sm:px-6 py-2.5 sm:py-3 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2.5">
       <!-- Brand Identity -->
       <div class="flex items-center gap-3">
@@ -293,7 +467,7 @@
             <h1 class="text-base sm:text-xl font-bold tracking-tight bg-gradient-to-r from-purple-950 via-purple-800 to-indigo-900 bg-clip-text text-transparent truncate">
               Audio Analyzer &amp; Hearing Test Suite
             </h1>
-            <span class="hidden sm:inline-block text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 border border-purple-300">
+            <span id="themeBadgeLabel" class="hidden sm:inline-block text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 border border-purple-300">
               Soft Lavender DSP
             </span>
           </div>
@@ -303,26 +477,88 @@
         </div>
       </div>
 
-      <!-- Main Tab Switcher -->
-      <nav class="w-full lg:w-auto grid grid-cols-2 lg:flex items-center gap-1.5 sm:gap-2 bg-purple-100/80 p-1.5 rounded-xl border border-purple-200">
-        <button
-          id="tabBtnAnalyzer"
-          onclick="switchTab('analyzer')"
-          class="tab-btn flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-white text-purple-900 border border-purple-300 shadow-sm"
-        >
-          <span class="w-2 h-2 rounded-full bg-purple-600 shrink-0"></span>
-          <span class="truncate">Tab 1: Spectrum Analyzer &amp; Pitch (f₀)</span>
-        </button>
+      <!-- Main Tab Switcher & Theme Display Dropdown Button Beside It -->
+      <div class="w-full lg:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+        <nav class="flex-1 lg:flex-initial grid grid-cols-2 lg:flex items-center gap-1.5 sm:gap-2 bg-purple-100/80 p-1.5 rounded-xl border border-purple-200">
+          <button
+            id="tabBtnAnalyzer"
+            onclick="switchTab('analyzer')"
+            class="tab-btn flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-white text-purple-900 border border-purple-300 shadow-sm"
+          >
+            <span class="w-2 h-2 rounded-full bg-purple-600 shrink-0"></span>
+            <span class="truncate">Tab 1: Spectrum Analyzer &amp; Pitch (f₀)</span>
+          </button>
 
-        <button
-          id="tabBtnHearing"
-          onclick="switchTab('hearing')"
-          class="tab-btn flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-purple-700/80 hover:text-purple-950 border border-transparent"
-        >
-          <span class="w-2 h-2 rounded-full bg-emerald-500/60 shrink-0"></span>
-          <span class="truncate">Tab 2: Hearing Test</span>
-        </button>
-      </nav>
+          <button
+            id="tabBtnHearing"
+            onclick="switchTab('hearing')"
+            class="tab-btn flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-purple-700/80 hover:text-purple-950 border border-transparent"
+          >
+            <span class="w-2 h-2 rounded-full bg-emerald-500/60 shrink-0"></span>
+            <span class="truncate">Tab 2: Hearing Test</span>
+          </button>
+        </nav>
+
+        <!-- Dropdown Button: ปรับการแสดงผลของเว็บไซต์ (ธีมสว่าง / ธีมมืด) -->
+        <div class="relative shrink-0" id="themeDropdownWrapper">
+          <button
+            id="btnThemeDropdownToggle"
+            type="button"
+            onclick="toggleThemeDropdown(event)"
+            aria-expanded="false"
+            class="w-full sm:w-auto flex items-center justify-between sm:justify-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-purple-100/90 hover:bg-purple-200/80 text-purple-950 border border-purple-300 shadow-sm transition-all select-none"
+          >
+            <span class="flex items-center gap-1.5">
+              <span id="themeCurrentIcon" class="text-sm">☀️</span>
+              <span>ปรับการแสดงผลของเว็บไซต์</span>
+            </span>
+            <svg id="themeDropdownChevron" class="w-4 h-4 text-purple-700 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          <!-- Slide-down Theme Options Menu -->
+          <div
+            id="themeDropdownMenu"
+            class="hidden absolute right-0 mt-2 w-full sm:w-64 rounded-xl glass-panel p-1.5 shadow-xl border border-purple-300 z-50 space-y-1 origin-top-right transition-all"
+          >
+            <div class="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider text-purple-800 border-b border-purple-200/70">
+              เลือกโหมดสีธีมเว็บไซต์
+            </div>
+            <button
+              id="btnThemeLight"
+              type="button"
+              onclick="setWebsiteTheme('light')"
+              class="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all bg-purple-700 text-white shadow-sm text-left"
+            >
+              <span class="flex items-center gap-2">
+                <span class="text-sm">☀️</span>
+                <span>
+                  <span class="block">ธีมสว่าง</span>
+                  <span class="block text-[10px] font-normal opacity-85">สีม่วงอ่อนพาสเทล (ค่าเริ่มต้น)</span>
+                </span>
+              </span>
+              <span id="checkThemeLight" class="font-mono text-xs font-extrabold">✓</span>
+            </button>
+
+            <button
+              id="btnThemeDark"
+              type="button"
+              onclick="setWebsiteTheme('dark')"
+              class="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all hover:bg-purple-100/80 text-purple-950 text-left"
+            >
+              <span class="flex items-center gap-2">
+                <span class="text-sm">🌙</span>
+                <span>
+                  <span class="block">ธีมมืด</span>
+                  <span class="block text-[10px] font-normal opacity-80">สีม่วงเข้มดูสบายตา</span>
+                </span>
+              </span>
+              <span id="checkThemeDark" class="hidden font-mono text-xs font-extrabold">✓</span>
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 
@@ -874,34 +1110,37 @@
             </div>
 
             <!-- Fixed-Size Chart Container -->
-            <div class="relative w-full h-[335px] min-h-[335px] max-h-[335px] bg-white rounded-xl p-2 border border-purple-200 shadow-inner overflow-hidden">
+            <div class="preserve-white-chart relative w-full h-[335px] min-h-[335px] max-h-[335px] bg-white rounded-xl p-2 border border-purple-200 shadow-inner overflow-hidden">
               <canvas id="analyzerCustomChart" class="w-full h-full block"></canvas>
             </div>
 
-            <!-- Bottom Regression & R² Result Display Box (Below Comparison Graph) -->
+            <!-- Bottom Regression & R² Result Display Box (Full Non-Truncated Stacked Layout: R² Below Linear Equation) -->
             <div
               id="analyzerRegressionResultBox"
-              class="rounded-xl bg-white/90 border border-purple-300/90 px-3.5 py-2.5 shadow-sm min-h-[64px] flex flex-col justify-center space-y-1"
+              class="rounded-xl bg-white/90 border border-purple-300/90 px-3.5 py-2.5 shadow-sm flex flex-col justify-center space-y-2"
             >
               <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
                 <span class="font-bold text-purple-950 flex items-center gap-1.5">
                   <span class="w-2 h-2 rounded-full bg-purple-600"></span>
                   ผลลัพธ์การวิเคราะห์เชิงเส้น (Linear Regression &amp; R² Analysis)
                 </span>
-                <span id="regressionAxisHint" class="text-[11px] font-mono text-purple-700">
+                <span id="regressionAxisHint" class="text-[11px] font-mono text-purple-700 break-words">
                   กดปุ่มด้านบนเพื่อแสดงสมการเส้นตรง (y = mx + c) และค่า R square
                 </span>
               </div>
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-0.5">
-                <div class="rounded-lg bg-purple-50/90 border border-purple-200 px-3 py-1.5 flex items-center justify-between gap-2">
-                  <span class="text-[11px] font-bold text-purple-900 whitespace-nowrap">สมการเส้นตรง (y = mx + c):</span>
-                  <span id="readoutLinearEquation" class="text-xs font-mono font-bold text-emerald-700 truncate text-right">
+
+              <!-- Stacked Full-Width Rows: สมการเส้นตรง (Top) and ค่า R square (Bottom) without truncation -->
+              <div class="grid grid-cols-1 gap-2 pt-0.5">
+                <div class="rounded-lg bg-purple-50/90 border border-purple-200 px-3 py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                  <span class="text-xs font-bold text-purple-900 shrink-0">สมการเส้นตรง (y = mx + c):</span>
+                  <span id="readoutLinearEquation" class="text-xs sm:text-sm font-mono font-bold text-emerald-700 break-words whitespace-normal sm:text-right">
                     -- (กดปุ่มคำนวณสมการเส้นตรง)
                   </span>
                 </div>
-                <div class="rounded-lg bg-purple-50/90 border border-purple-200 px-3 py-1.5 flex items-center justify-between gap-2">
-                  <span class="text-[11px] font-bold text-purple-900 whitespace-nowrap">ค่า R square (R²):</span>
-                  <span id="readoutRSquareValue" class="text-xs font-mono font-bold text-indigo-700 truncate text-right">
+
+                <div class="rounded-lg bg-purple-50/90 border border-purple-200 px-3 py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                  <span class="text-xs font-bold text-purple-900 shrink-0">ค่า R square (R²):</span>
+                  <span id="readoutRSquareValue" class="text-xs sm:text-sm font-mono font-bold text-indigo-700 break-words whitespace-normal sm:text-right">
                     -- (กดปุ่มคำนวณค่า R square)
                   </span>
                 </div>
@@ -1271,7 +1510,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <!-- Main Equal-Loudness Chart (White Background + Black Font Text) -->
-          <div class="lg:col-span-9 bg-white rounded-2xl p-4 sm:p-5 border-2 border-purple-200/90 shadow-md space-y-3">
+          <div class="preserve-white-chart lg:col-span-9 bg-white rounded-2xl p-4 sm:p-5 border-2 border-purple-200/90 shadow-md space-y-3">
             <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
               <span class="font-bold text-black tracking-tight">
                 Frequency Response / Equal-Loudness Contour (X: Log Frequency Hz, Y: Sound Level 0dB ถึง 90dB)
@@ -1288,7 +1527,7 @@
             </div>
 
             <!-- White Chart Container with Black Font Labels -->
-            <div class="relative w-full h-[400px] bg-white rounded-xl p-2 border border-slate-200">
+            <div class="preserve-white-chart relative w-full h-[400px] bg-white rounded-xl p-2 border border-slate-200">
               <canvas id="hearingCurveChart"></canvas>
             </div>
           </div>
@@ -3524,10 +3763,10 @@
       if (eqEl) {
         if (!analyzerState.showLinearEquation) {
           eqEl.textContent = '-- (กดปุ่มคำนวณสมการเส้นตรง)';
-          eqEl.className = 'text-xs font-mono font-medium text-slate-400 truncate text-right';
+          eqEl.className = 'text-xs sm:text-sm font-mono font-medium text-slate-400 break-words whitespace-normal sm:text-right';
         } else if (!primaryReg.valid) {
           eqEl.textContent = 'ต้องมีข้อมูลอย่างน้อย 2 รายการ';
-          eqEl.className = 'text-xs font-mono font-semibold text-amber-700 truncate text-right';
+          eqEl.className = 'text-xs sm:text-sm font-mono font-semibold text-amber-700 break-words whitespace-normal sm:text-right';
         } else {
           const eqStr =
             secondaryReg && secondaryReg.valid
@@ -3535,17 +3774,17 @@
               : primaryReg.equation;
           eqEl.textContent = eqStr;
           eqEl.title = eqStr;
-          eqEl.className = 'text-xs font-mono font-bold text-emerald-700 truncate text-right';
+          eqEl.className = 'text-xs sm:text-sm font-mono font-bold text-emerald-700 break-words whitespace-normal sm:text-right';
         }
       }
 
       if (r2El) {
         if (!analyzerState.showRSquare) {
           r2El.textContent = '-- (กดปุ่มคำนวณค่า R square)';
-          r2El.className = 'text-xs font-mono font-medium text-slate-400 truncate text-right';
+          r2El.className = 'text-xs sm:text-sm font-mono font-medium text-slate-400 break-words whitespace-normal sm:text-right';
         } else if (!primaryReg.valid) {
           r2El.textContent = 'ต้องมีข้อมูลอย่างน้อย 2 รายการ';
-          r2El.className = 'text-xs font-mono font-semibold text-amber-700 truncate text-right';
+          r2El.className = 'text-xs sm:text-sm font-mono font-semibold text-amber-700 break-words whitespace-normal sm:text-right';
         } else {
           const r2Str =
             secondaryReg && secondaryReg.valid
@@ -3553,7 +3792,7 @@
               : `${primaryReg.r2Text} (${(primaryReg.r2 * 100).toFixed(1)}%)`;
           r2El.textContent = r2Str;
           r2El.title = r2Str;
-          r2El.className = 'text-xs font-mono font-bold text-indigo-700 truncate text-right';
+          r2El.className = 'text-xs sm:text-sm font-mono font-bold text-indigo-700 break-words whitespace-normal sm:text-right';
         }
       }
 
@@ -4695,6 +4934,97 @@
       }
     });
 
+    // =========================================================================
+    // 6. WEBSITE DISPLAY THEME CONTROLLER ("ธีมสว่าง" / "ธีมมืด")
+    // =========================================================================
+    let currentWebsiteTheme = 'light';
+
+    function toggleThemeDropdown(event) {
+      if (event) event.stopPropagation();
+      const menu = document.getElementById('themeDropdownMenu');
+      const btn = document.getElementById('btnThemeDropdownToggle');
+      const chevron = document.getElementById('themeDropdownChevron');
+      if (!menu) return;
+
+      const isHidden = menu.classList.contains('hidden');
+      if (isHidden) {
+        menu.classList.remove('hidden');
+        if (btn) btn.setAttribute('aria-expanded', 'true');
+        if (chevron) chevron.classList.add('rotate-180');
+      } else {
+        closeThemeDropdown();
+      }
+    }
+
+    function closeThemeDropdown() {
+      const menu = document.getElementById('themeDropdownMenu');
+      const btn = document.getElementById('btnThemeDropdownToggle');
+      const chevron = document.getElementById('themeDropdownChevron');
+      if (menu && !menu.classList.contains('hidden')) {
+        menu.classList.add('hidden');
+      }
+      if (btn) btn.setAttribute('aria-expanded', 'false');
+      if (chevron) chevron.classList.remove('rotate-180');
+    }
+
+    function setWebsiteTheme(themeMode) {
+      currentWebsiteTheme = themeMode === 'dark' ? 'dark' : 'light';
+      const isDark = currentWebsiteTheme === 'dark';
+
+      if (isDark) {
+        document.body.classList.add('theme-dark');
+      } else {
+        document.body.classList.remove('theme-dark');
+      }
+
+      const metaTheme = document.querySelector('meta[name="theme-color"]');
+      if (metaTheme) {
+        metaTheme.setAttribute('content', isDark ? '#150c24' : '#ede4f7');
+      }
+
+      const iconEl = document.getElementById('themeCurrentIcon');
+      const badgeEl = document.getElementById('themeBadgeLabel');
+      const btnLight = document.getElementById('btnThemeLight');
+      const btnDark = document.getElementById('btnThemeDark');
+      const chkLight = document.getElementById('checkThemeLight');
+      const chkDark = document.getElementById('checkThemeDark');
+
+      if (iconEl) iconEl.textContent = isDark ? '🌙' : '☀️';
+      if (badgeEl) badgeEl.textContent = isDark ? 'Deep Purple Dark' : 'Soft Lavender DSP';
+
+      const activeOptCls =
+        'w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all bg-purple-700 text-white shadow-sm text-left';
+      const inactiveOptCls =
+        'w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all hover:bg-purple-100/80 text-purple-950 text-left';
+
+      if (btnLight) btnLight.className = !isDark ? activeOptCls : inactiveOptCls;
+      if (btnDark) btnDark.className = isDark ? activeOptCls : inactiveOptCls;
+      if (chkLight) chkLight.classList.toggle('hidden', isDark);
+      if (chkDark) chkDark.classList.toggle('hidden', !isDark);
+
+      try {
+        localStorage.setItem('agy_music_dsp_theme', currentWebsiteTheme);
+      } catch (_) {}
+
+      closeThemeDropdown();
+    }
+
+    function initWebsiteTheme() {
+      let saved = 'light';
+      try {
+        const stored = localStorage.getItem('agy_music_dsp_theme');
+        if (stored === 'dark' || stored === 'light') saved = stored;
+      } catch (_) {}
+      setWebsiteTheme(saved);
+    }
+
+    document.addEventListener('click', (e) => {
+      const wrapper = document.getElementById('themeDropdownWrapper');
+      if (wrapper && !wrapper.contains(e.target)) {
+        closeThemeDropdown();
+      }
+    });
+
     // Clean up all Web Audio contexts, nodes, and media streams on page unload
     window.addEventListener('pagehide', () => {
       cleanupAnalyzerAudio();
@@ -4707,6 +5037,7 @@
 
     // Initialize Application on DOM Ready
     window.addEventListener('DOMContentLoaded', () => {
+      initWebsiteTheme();
       initHudDomCache();
       bindReusableAnalyzerBuffers(analyzerState.fftSize);
       resizeAnalyzerCanvases();
