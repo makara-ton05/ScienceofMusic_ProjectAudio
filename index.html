@@ -1141,12 +1141,12 @@
                 </button>
               </div>
 
-              <!-- Collapsible Panel Containing the 3 Analysis Buttons Revealed When Single Button is Clicked -->
+              <!-- Collapsible Panel Containing the 4 Analysis Buttons Revealed When Single Button is Clicked -->
               <div
                 id="analysisButtonsDrawer"
                 class="hidden rounded-xl bg-purple-100/80 border border-purple-300 p-2.5 shadow-inner"
               >
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <button
                     id="btnCalcLinearEq"
                     type="button"
@@ -1174,6 +1174,15 @@
                   >
                     คำนวณสมการเส้นตรงจาก logarithm
                   </button>
+                  <button
+                    id="btnCalcLogRSquare"
+                    type="button"
+                    onclick="toggleCalculateLogRSquare()"
+                    class="w-full px-3 py-2 rounded-lg text-xs font-bold bg-white hover:bg-purple-50 text-purple-900 border border-purple-300 shadow-sm transition-all text-center"
+                    title="คำนวณและแสดงค่า R square จากสมการลอการิทึม (Logarithmic R²)"
+                  >
+                    คำนวณค่า R square จาก logarithm
+                  </button>
                 </div>
               </div>
             </div>
@@ -1198,7 +1207,7 @@
                 </span>
               </div>
 
-              <!-- Stacked Full-Width Rows: สมการเส้นตรง, ค่า R square, และ สมการเส้นตรงจาก logarithm -->
+              <!-- Stacked Full-Width Rows: สมการเส้นตรง, ค่า R square, สมการเส้นตรงจาก logarithm, และ ค่า R square จาก logarithm -->
               <div class="grid grid-cols-1 gap-2 pt-0.5">
                 <div class="rounded-lg bg-purple-50/90 border border-purple-200 px-3 py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                   <span class="text-xs font-bold text-purple-900 shrink-0">สมการเส้นตรง (y = mx + c):</span>
@@ -1218,6 +1227,13 @@
                   <span class="text-xs font-bold text-purple-900 shrink-0">สมการเส้นตรงจาก logarithm:</span>
                   <span id="readoutLogEquation" class="text-xs sm:text-sm font-mono font-bold text-amber-700 break-words whitespace-normal sm:text-right">
                     -- (กดปุ่มคำนวณสมการเส้นตรงจาก logarithm)
+                  </span>
+                </div>
+
+                <div class="rounded-lg bg-purple-50/90 border border-purple-200 px-3 py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                  <span class="text-xs font-bold text-purple-900 shrink-0">ค่า R square จาก logarithm:</span>
+                  <span id="readoutLogRSquareValue" class="text-xs sm:text-sm font-mono font-bold text-cyan-700 break-words whitespace-normal sm:text-right">
+                    -- (กดปุ่มคำนวณค่า R square จาก logarithm)
                   </span>
                 </div>
               </div>
@@ -1837,7 +1853,8 @@
       isAnalysisMenuOpen: false,
       showLinearEquation: false,
       showRSquare: false,
-      showLogEquation: false
+      showLogEquation: false,
+      showLogRSquare: false
     };
 
     // Cached DOM References & Dirty-Checked DOM Setters (Prevents Layout Thrashing)
@@ -3857,9 +3874,11 @@
       const btnEq = document.getElementById('btnCalcLinearEq');
       const btnR2 = document.getElementById('btnCalcRSquare');
       const btnLog = document.getElementById('btnCalcLogEq');
+      const btnLogR2 = document.getElementById('btnCalcLogRSquare');
       const eqEl = document.getElementById('readoutLinearEquation');
       const r2El = document.getElementById('readoutRSquareValue');
       const logEl = document.getElementById('readoutLogEquation');
+      const logR2El = document.getElementById('readoutLogRSquareValue');
       const hintEl = document.getElementById('regressionAxisHint');
 
       const activeBtnCls =
@@ -3875,6 +3894,9 @@
       }
       if (btnLog) {
         btnLog.className = analyzerState.showLogEquation ? activeBtnCls : inactiveBtnCls;
+      }
+      if (btnLogR2) {
+        btnLogR2.className = analyzerState.showLogRSquare ? activeBtnCls : inactiveBtnCls;
       }
 
       const modeEl = document.getElementById('selectAnalyzerChartMode');
@@ -3943,10 +3965,28 @@
           const logStr =
             secondaryLogReg && secondaryLogReg.valid
               ? `Peak: ${primaryLogReg.equation} | ${regInfo.secondaryLabel}: ${secondaryLogReg.equation}`
-              : `${primaryLogReg.equation} (${primaryLogReg.r2Text})`;
+              : primaryLogReg.equation;
           logEl.textContent = logStr;
           logEl.title = logStr;
           logEl.className = 'text-xs sm:text-sm font-mono font-bold text-amber-700 break-words whitespace-normal sm:text-right';
+        }
+      }
+
+      if (logR2El) {
+        if (!analyzerState.showLogRSquare) {
+          logR2El.textContent = '-- (กดปุ่มคำนวณค่า R square จาก logarithm)';
+          logR2El.className = 'text-xs sm:text-sm font-mono font-medium text-slate-400 break-words whitespace-normal sm:text-right';
+        } else if (!primaryLogReg.valid) {
+          logR2El.textContent = 'ต้องมีข้อมูลอย่างน้อย 2 รายการ';
+          logR2El.className = 'text-xs sm:text-sm font-mono font-semibold text-amber-700 break-words whitespace-normal sm:text-right';
+        } else {
+          const logR2Str =
+            secondaryLogReg && secondaryLogReg.valid
+              ? `Peak: ${primaryLogReg.r2Text} | ${regInfo.secondaryLabel}: ${secondaryLogReg.r2Text}`
+              : `${primaryLogReg.r2Text} (${(primaryLogReg.r2 * 100).toFixed(1)}%)`;
+          logR2El.textContent = logR2Str;
+          logR2El.title = logR2Str;
+          logR2El.className = 'text-xs sm:text-sm font-mono font-bold text-cyan-700 break-words whitespace-normal sm:text-right';
         }
       }
 
@@ -3966,6 +4006,11 @@
     function toggleCalculateLogEquation() {
       analyzerState.showLogEquation = !analyzerState.showLogEquation;
       updateAnalyzerCustomChart(true);
+    }
+
+    function toggleCalculateLogRSquare() {
+      analyzerState.showLogRSquare = !analyzerState.showLogRSquare;
+      updateRegressionAndRSquareUI();
     }
 
     function updateAnalyzerCustomChart(forceRecreate = false) {
