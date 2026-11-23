@@ -448,13 +448,52 @@
     body.theme-dark ::-webkit-scrollbar-thumb {
       background: rgba(124, 86, 182, 0.7);
     }
+
+    /* Force BLACK font color on "สีธีมเว็บไซต์" button and dropdown options in ALL themes */
+    .theme-black-text,
+    .theme-black-text *,
+    body.theme-dark .theme-black-text,
+    body.theme-dark .theme-black-text * {
+      color: #000000 !important;
+    }
+    #btnThemeDropdownToggle,
+    body.theme-dark #btnThemeDropdownToggle {
+      background-color: #f3e8ff !important;
+      border-color: #c084fc !important;
+      color: #000000 !important;
+    }
+    #btnThemeDropdownToggle:hover,
+    body.theme-dark #btnThemeDropdownToggle:hover {
+      background-color: #e9d5ff !important;
+    }
+    #themeDropdownMenu,
+    body.theme-dark #themeDropdownMenu {
+      background-color: #faf5ff !important;
+      border-color: #c084fc !important;
+      color: #000000 !important;
+    }
+
+    /* iPad & Tablet Universal Ergonomics (iPad Mini 744px, iPad Air 820px, iPad Pro 834px-1194px) */
+    @media (min-width: 744px) and (max-width: 1279px) {
+      main {
+        padding-left: 1.25rem !important;
+        padding-right: 1.25rem !important;
+      }
+      .readout-card {
+        min-height: 76px;
+      }
+      #unswGridScrollWrapper {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-x: contain;
+      }
+    }
   </style>
 </head>
 
 <body class="font-sans antialiased selection:bg-purple-300 selection:text-purple-900 transition-colors duration-300">
   <!-- Top Scientific Header & Navigation -->
   <header class="safe-top-header sticky top-0 z-40 border-b border-purple-200/80 bg-white/80 backdrop-blur-xl shadow-sm transition-colors duration-300">
-    <div class="max-w-[1440px] mx-auto px-3.5 sm:px-6 py-2.5 sm:py-3 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2.5">
+    <div class="max-w-[1440px] mx-auto px-3.5 sm:px-6 py-2.5 sm:py-3 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-2.5">
       <!-- Brand Identity -->
       <div class="flex items-center gap-3">
         <div class="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-xl bg-gradient-to-br from-purple-600/15 to-violet-500/25 border border-purple-400/40 flex items-center justify-center shadow-[0_0_15px_rgba(142,95,179,0.25)]">
@@ -477,13 +516,13 @@
         </div>
       </div>
 
-      <!-- Main Tab Switcher & Theme Display Dropdown Button Beside It -->
-      <div class="w-full lg:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-        <nav class="flex-1 lg:flex-initial grid grid-cols-2 lg:flex items-center gap-1.5 sm:gap-2 bg-purple-100/80 p-1.5 rounded-xl border border-purple-200">
+      <!-- Main Tab Switcher & Theme Display Dropdown Button ("สีธีมเว็บไซต์") Beside It -->
+      <div class="w-full xl:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+        <nav class="flex-1 xl:flex-initial grid grid-cols-2 sm:flex items-center gap-1.5 sm:gap-2 bg-purple-100/80 p-1.5 rounded-xl border border-purple-200">
           <button
             id="tabBtnAnalyzer"
             onclick="switchTab('analyzer')"
-            class="tab-btn flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-white text-purple-900 border border-purple-300 shadow-sm"
+            class="tab-btn flex-1 sm:flex-initial flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all bg-white text-purple-900 border border-purple-300 shadow-sm"
           >
             <span class="w-2 h-2 rounded-full bg-purple-600 shrink-0"></span>
             <span class="truncate">Tab 1: Spectrum Analyzer &amp; Pitch (f₀)</span>
@@ -492,50 +531,50 @@
           <button
             id="tabBtnHearing"
             onclick="switchTab('hearing')"
-            class="tab-btn flex items-center justify-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-purple-700/80 hover:text-purple-950 border border-transparent"
+            class="tab-btn flex-1 sm:flex-initial flex items-center justify-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-purple-700/80 hover:text-purple-950 border border-transparent"
           >
             <span class="w-2 h-2 rounded-full bg-emerald-500/60 shrink-0"></span>
             <span class="truncate">Tab 2: Hearing Test</span>
           </button>
         </nav>
 
-        <!-- Dropdown Button: ปรับการแสดงผลของเว็บไซต์ (ธีมสว่าง / ธีมมืด) -->
-        <div class="relative shrink-0" id="themeDropdownWrapper">
+        <!-- Dropdown Button: สีธีมเว็บไซต์ (Black font in ALL website themes) -->
+        <div class="relative shrink-0 theme-black-text" id="themeDropdownWrapper">
           <button
             id="btnThemeDropdownToggle"
             type="button"
             onclick="toggleThemeDropdown(event)"
             aria-expanded="false"
-            class="w-full sm:w-auto flex items-center justify-between sm:justify-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-purple-100/90 hover:bg-purple-200/80 text-purple-950 border border-purple-300 shadow-sm transition-all select-none"
+            class="theme-black-text w-full sm:w-auto flex items-center justify-between sm:justify-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-bold border shadow-sm transition-all select-none"
           >
             <span class="flex items-center gap-1.5">
               <span id="themeCurrentIcon" class="text-sm">☀️</span>
-              <span>ปรับการแสดงผลของเว็บไซต์</span>
+              <span>สีธีมเว็บไซต์</span>
             </span>
-            <svg id="themeDropdownChevron" class="w-4 h-4 text-purple-700 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+            <svg id="themeDropdownChevron" class="w-4 h-4 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="#000000" stroke-width="2.4">
               <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
             </svg>
           </button>
 
-          <!-- Slide-down Theme Options Menu -->
+          <!-- Slide-down Theme Options Menu (Black font in all themes) -->
           <div
             id="themeDropdownMenu"
-            class="hidden absolute right-0 mt-2 w-full sm:w-64 rounded-xl glass-panel p-1.5 shadow-xl border border-purple-300 z-50 space-y-1 origin-top-right transition-all"
+            class="theme-black-text hidden absolute right-0 mt-2 w-full sm:w-64 rounded-xl p-1.5 shadow-xl border z-50 space-y-1 origin-top-right transition-all"
           >
-            <div class="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider text-purple-800 border-b border-purple-200/70">
-              เลือกโหมดสีธีมเว็บไซต์
+            <div class="px-2.5 py-1 text-[10px] font-mono font-bold uppercase tracking-wider border-b border-purple-300/80">
+              เลือกสีธีมเว็บไซต์
             </div>
             <button
               id="btnThemeLight"
               type="button"
               onclick="setWebsiteTheme('light')"
-              class="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all bg-purple-700 text-white shadow-sm text-left"
+              class="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all bg-purple-300/90 border border-purple-400 shadow-sm text-left"
             >
               <span class="flex items-center gap-2">
                 <span class="text-sm">☀️</span>
                 <span>
-                  <span class="block">ธีมสว่าง</span>
-                  <span class="block text-[10px] font-normal opacity-85">สีม่วงอ่อนพาสเทล (ค่าเริ่มต้น)</span>
+                  <span class="block font-bold">ธีมสว่าง</span>
+                  <span class="block text-[10px] font-medium opacity-85">สีม่วงอ่อนพาสเทล (ค่าเริ่มต้น)</span>
                 </span>
               </span>
               <span id="checkThemeLight" class="font-mono text-xs font-extrabold">✓</span>
@@ -545,13 +584,13 @@
               id="btnThemeDark"
               type="button"
               onclick="setWebsiteTheme('dark')"
-              class="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all hover:bg-purple-100/80 text-purple-950 text-left"
+              class="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all hover:bg-purple-200/70 border border-transparent text-left"
             >
               <span class="flex items-center gap-2">
                 <span class="text-sm">🌙</span>
                 <span>
-                  <span class="block">ธีมมืด</span>
-                  <span class="block text-[10px] font-normal opacity-80">สีม่วงเข้มดูสบายตา</span>
+                  <span class="block font-bold">ธีมมืด</span>
+                  <span class="block text-[10px] font-medium opacity-85">สีม่วงเข้มดูสบายตา</span>
                 </span>
               </span>
               <span id="checkThemeDark" class="hidden font-mono text-xs font-extrabold">✓</span>
@@ -571,7 +610,7 @@
       <div class="glass-panel rounded-2xl p-3.5 sm:p-5 space-y-4 overflow-hidden">
         <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-3.5">
           <!-- Primary Controls -->
-          <div class="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full xl:w-auto shrink-0">
+          <div class="grid grid-cols-2 sm:grid-cols-4 xl:flex xl:flex-wrap items-center gap-2 w-full xl:w-auto shrink-0">
             <button
               id="btnMicToggle"
               onclick="toggleMicrophone()"
@@ -909,9 +948,9 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
           <!-- Left Column: Unified Single Data Recording Box with Side Timer Options -->
-          <div class="lg:col-span-5">
+          <div class="xl:col-span-5">
             <div class="glass-subpanel rounded-xl p-4 space-y-4 border border-purple-300/90 flex flex-col justify-between">
               <!-- Top Unified Data Recording & Side Interval Selector -->
               <div class="space-y-3">
@@ -928,10 +967,10 @@
                   </button>
                 </div>
 
-                <!-- Unified Recording Box with Side Timer Options -->
-                <div class="grid grid-cols-1 sm:grid-cols-12 gap-3 items-stretch bg-white/80 rounded-xl p-3 border border-purple-200/90 shadow-sm">
+                <!-- Unified Recording Box with Side Timer Options (Responsive on Mobile, iPad/Tablet, and Desktop) -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-3 items-stretch bg-white/80 rounded-xl p-3 border border-purple-200/90 shadow-sm">
                   <!-- Left / Main Recording Controls -->
-                  <div class="sm:col-span-7 flex flex-col justify-between space-y-2">
+                  <div class="md:col-span-7 flex flex-col justify-between space-y-2">
                     <div class="flex items-center justify-between gap-1">
                       <span class="text-xs font-bold text-purple-950">บันทึกข้อมูลผลการทดลอง</span>
                       <button
@@ -948,7 +987,7 @@
                       placeholder="ชื่อการทดลอง (เช่น กีตาร์ A4)"
                       class="w-full bg-white border border-purple-300 rounded-lg px-2.5 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-purple-600"
                     />
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-1.5">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 xl:grid-cols-1 2xl:grid-cols-3 gap-1.5">
                       <input
                         id="inputSampleF0"
                         type="number"
@@ -957,7 +996,7 @@
                         max="24000"
                         placeholder="ความถี่มูลฐาน (Hz)"
                         title="ความถี่มูลฐาน f₀ (Hz)"
-                        class="w-full bg-white border border-emerald-400 rounded-lg px-2 py-1.5 text-xs font-mono text-slate-800 focus:outline-none focus:border-emerald-600"
+                        class="w-full bg-white border border-emerald-400 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-800 focus:outline-none focus:border-emerald-600"
                       />
                       <input
                         id="inputSampleHz"
@@ -967,7 +1006,7 @@
                         max="24000"
                         placeholder="ความถี่ (Hz)"
                         title="ความถี่หลัก Peak (Hz)"
-                        class="w-full bg-white border border-purple-300 rounded-lg px-2 py-1.5 text-xs font-mono text-slate-800 focus:outline-none focus:border-purple-600"
+                        class="w-full bg-white border border-purple-300 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-800 focus:outline-none focus:border-purple-600"
                       />
                       <input
                         id="inputSampleDb"
@@ -977,7 +1016,7 @@
                         max="100"
                         placeholder="ความดัง (dB)"
                         title="ความดัง (0-100 dB)"
-                        class="w-full bg-white border border-purple-300 rounded-lg px-2 py-1.5 text-xs font-mono text-slate-800 focus:outline-none focus:border-purple-600"
+                        class="w-full bg-white border border-purple-300 rounded-lg px-2.5 py-1.5 text-xs font-mono text-slate-800 focus:outline-none focus:border-purple-600"
                       />
                     </div>
                     <button
@@ -990,7 +1029,7 @@
                   </div>
 
                   <!-- Side Options: Auto-Plot Timer Interval Selector (0.5s, 1s, 2s) -->
-                  <div class="sm:col-span-5 flex flex-col justify-between bg-purple-100/75 rounded-xl p-2.5 border border-purple-200 space-y-1.5">
+                  <div class="md:col-span-5 flex flex-col justify-between bg-purple-100/75 rounded-xl p-2.5 border border-purple-200 space-y-1.5">
                     <div class="text-[11px] font-bold text-purple-950 text-center pb-0.5 border-b border-purple-200/80">
                       ⏱ จับเวลาบันทึกข้อมูล
                     </div>
@@ -1066,46 +1105,76 @@
           </div>
 
           <!-- Right Column: Interactive Chart.js Plotter (Fixed Size Container so chart never resizes during plotting) -->
-          <div class="lg:col-span-7 glass-subpanel rounded-xl p-4 flex flex-col justify-between space-y-3">
-            <!-- Top Bar: Chart Mode Selector + Linear Regression & R² Function Buttons Beside It -->
-            <div class="flex flex-col xl:flex-row xl:items-center justify-between gap-2.5">
-              <div class="flex flex-col sm:flex-row sm:items-center gap-2 flex-1 min-w-0">
-                <label for="selectAnalyzerChartMode" class="text-xs font-bold text-purple-950 whitespace-nowrap shrink-0">
-                  รูปแบบกราฟเปรียบเทียบ:
-                </label>
-                <select
-                  id="selectAnalyzerChartMode"
-                  onchange="updateAnalyzerCustomChart(true)"
-                  class="w-full flex-1 min-w-0 bg-white border border-purple-300 rounded-lg px-2.5 py-1.5 text-xs text-purple-950 font-medium focus:outline-none focus:border-purple-600 shadow-sm truncate"
+          <div class="xl:col-span-7 glass-subpanel rounded-xl p-4 flex flex-col justify-between space-y-3">
+            <!-- Top Bar: Chart Mode Selector + Single Combined Analysis Menu Button Beside It -->
+            <div class="space-y-2.5">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
+                <div class="flex flex-col sm:flex-row sm:items-center gap-2 flex-1 min-w-0">
+                  <label for="selectAnalyzerChartMode" class="text-xs font-bold text-purple-950 whitespace-nowrap shrink-0">
+                    รูปแบบกราฟเปรียบเทียบ:
+                  </label>
+                  <select
+                    id="selectAnalyzerChartMode"
+                    onchange="updateAnalyzerCustomChart(true)"
+                    class="w-full flex-1 min-w-0 bg-white border border-purple-300 rounded-lg px-2.5 py-2 text-xs text-purple-950 font-medium focus:outline-none focus:border-purple-600 shadow-sm truncate"
+                  >
+                    <option value="line_freq">กราฟเส้น: การเปลี่ยนแปลงความถี่หลักและ f₀ ตามเวลา (Hz vs Sample)</option>
+                    <option value="bar_db">กราฟแท่ง: เปรียบเทียบระดับความดังในแต่ละการทดลอง (dB Comparison)</option>
+                    <option value="bar_freq">กราฟแท่ง: เปรียบเทียบความถี่ในแต่ละการทดลอง (Hz Comparison)</option>
+                    <option value="line_dual">กราฟเส้นคู่: เปรียบเทียบทั้งความถี่ (Hz) และความดัง (dB)</option>
+                    <option value="scatter_freq_db">กราฟจุด XY: ความถี่ (Hz) เทียบกับความดัง (dB)</option>
+                  </select>
+                </div>
+
+                <!-- Single Combined Button Beside Chart Mode Selector: Opens the 3 Calculation Buttons -->
+                <button
+                  id="btnAnalysisMenuToggle"
+                  type="button"
+                  onclick="toggleAnalysisButtonsMenu()"
+                  aria-expanded="false"
+                  class="shrink-0 flex items-center justify-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-purple-700 hover:bg-purple-800 text-white border border-purple-800 shadow-sm transition-all select-none whitespace-nowrap"
                 >
-                  <option value="line_freq">กราฟเส้น: การเปลี่ยนแปลงความถี่หลักและ f₀ ตามเวลา (Hz vs Sample)</option>
-                  <option value="bar_db">กราฟแท่ง: เปรียบเทียบระดับความดังในแต่ละการทดลอง (dB Comparison)</option>
-                  <option value="bar_freq">กราฟแท่ง: เปรียบเทียบความถี่ในแต่ละการทดลอง (Hz Comparison)</option>
-                  <option value="line_dual">กราฟเส้นคู่: เปรียบเทียบทั้งความถี่ (Hz) และความดัง (dB)</option>
-                  <option value="scatter_freq_db">กราฟจุด XY: ความถี่ (Hz) เทียบกับความดัง (dB)</option>
-                </select>
+                  <span>📐 ฟังก์ชันคำนวณสมการ / R square</span>
+                  <svg id="iconAnalysisMenuChevron" class="w-4 h-4 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
               </div>
 
-              <!-- Function Buttons Beside Chart Selector: Linear Equation (y = mx + c) & R Square -->
-              <div class="flex flex-wrap sm:flex-nowrap items-center gap-1.5 shrink-0">
-                <button
-                  id="btnCalcLinearEq"
-                  type="button"
-                  onclick="toggleCalculateLinearEquation()"
-                  class="flex-1 sm:flex-none px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-white hover:bg-purple-50 text-purple-900 border border-purple-300 shadow-sm transition-all whitespace-nowrap"
-                  title="คำนวณและแสดงสมการเส้นตรงแนวโน้ม (Linear Regression: y = mx + c)"
-                >
-                  📈 การคำนวณค่าสมการเส้นตรง (เช่น y = mx + c)
-                </button>
-                <button
-                  id="btnCalcRSquare"
-                  type="button"
-                  onclick="toggleCalculateRSquare()"
-                  class="flex-1 sm:flex-none px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-white hover:bg-purple-50 text-purple-900 border border-purple-300 shadow-sm transition-all whitespace-nowrap"
-                  title="คำนวณและแสดงค่าสัมประสิทธิ์การตัดสินใจ (R Square / R²)"
-                >
-                  📊 คำนวณค่า R square
-                </button>
+              <!-- Collapsible Panel Containing the 3 Analysis Buttons Revealed When Single Button is Clicked -->
+              <div
+                id="analysisButtonsDrawer"
+                class="hidden rounded-xl bg-purple-100/80 border border-purple-300 p-2.5 shadow-inner"
+              >
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <button
+                    id="btnCalcLinearEq"
+                    type="button"
+                    onclick="toggleCalculateLinearEquation()"
+                    class="w-full px-3 py-2 rounded-lg text-xs font-bold bg-white hover:bg-purple-50 text-purple-900 border border-purple-300 shadow-sm transition-all text-center"
+                    title="คำนวณและแสดงสมการเส้นตรงแนวโน้ม (Linear Regression: y = mx + c)"
+                  >
+                    คำนวณค่าสมการเส้นตรง
+                  </button>
+                  <button
+                    id="btnCalcRSquare"
+                    type="button"
+                    onclick="toggleCalculateRSquare()"
+                    class="w-full px-3 py-2 rounded-lg text-xs font-bold bg-white hover:bg-purple-50 text-purple-900 border border-purple-300 shadow-sm transition-all text-center"
+                    title="คำนวณและแสดงค่าสัมประสิทธิ์การตัดสินใจ (R Square / R²)"
+                  >
+                    คำนวณค่า R square
+                  </button>
+                  <button
+                    id="btnCalcLogEq"
+                    type="button"
+                    onclick="toggleCalculateLogEquation()"
+                    class="w-full px-3 py-2 rounded-lg text-xs font-bold bg-white hover:bg-purple-50 text-purple-900 border border-purple-300 shadow-sm transition-all text-center"
+                    title="คำนวณและแสดงสมการเส้นตรงจากลอการิทึม (Logarithmic Regression: y = m·ln(x) + c)"
+                  >
+                    คำนวณสมการเส้นตรงจาก logarithm
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -1114,7 +1183,7 @@
               <canvas id="analyzerCustomChart" class="w-full h-full block"></canvas>
             </div>
 
-            <!-- Bottom Regression & R² Result Display Box (Full Non-Truncated Stacked Layout: R² Below Linear Equation) -->
+            <!-- Bottom Regression, R² & Logarithm Result Display Box (Full Non-Truncated Stacked Layout) -->
             <div
               id="analyzerRegressionResultBox"
               class="rounded-xl bg-white/90 border border-purple-300/90 px-3.5 py-2.5 shadow-sm flex flex-col justify-center space-y-2"
@@ -1122,19 +1191,19 @@
               <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
                 <span class="font-bold text-purple-950 flex items-center gap-1.5">
                   <span class="w-2 h-2 rounded-full bg-purple-600"></span>
-                  ผลลัพธ์การวิเคราะห์เชิงเส้น (Linear Regression &amp; R² Analysis)
+                  ผลลัพธ์การวิเคราะห์เชิงเส้น (Linear, R² &amp; Logarithm Analysis)
                 </span>
                 <span id="regressionAxisHint" class="text-[11px] font-mono text-purple-700 break-words">
-                  กดปุ่มด้านบนเพื่อแสดงสมการเส้นตรง (y = mx + c) และค่า R square
+                  กดปุ่มฟังก์ชันด้านบนเพื่อเปิดปุ่มคำนวณสมการเส้นตรง, ค่า R square และสมการจาก logarithm
                 </span>
               </div>
 
-              <!-- Stacked Full-Width Rows: สมการเส้นตรง (Top) and ค่า R square (Bottom) without truncation -->
+              <!-- Stacked Full-Width Rows: สมการเส้นตรง, ค่า R square, และ สมการเส้นตรงจาก logarithm -->
               <div class="grid grid-cols-1 gap-2 pt-0.5">
                 <div class="rounded-lg bg-purple-50/90 border border-purple-200 px-3 py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
                   <span class="text-xs font-bold text-purple-900 shrink-0">สมการเส้นตรง (y = mx + c):</span>
                   <span id="readoutLinearEquation" class="text-xs sm:text-sm font-mono font-bold text-emerald-700 break-words whitespace-normal sm:text-right">
-                    -- (กดปุ่มคำนวณสมการเส้นตรง)
+                    -- (กดปุ่มคำนวณค่าสมการเส้นตรง)
                   </span>
                 </div>
 
@@ -1142,6 +1211,13 @@
                   <span class="text-xs font-bold text-purple-900 shrink-0">ค่า R square (R²):</span>
                   <span id="readoutRSquareValue" class="text-xs sm:text-sm font-mono font-bold text-indigo-700 break-words whitespace-normal sm:text-right">
                     -- (กดปุ่มคำนวณค่า R square)
+                  </span>
+                </div>
+
+                <div class="rounded-lg bg-purple-50/90 border border-purple-200 px-3 py-2 flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
+                  <span class="text-xs font-bold text-purple-900 shrink-0">สมการเส้นตรงจาก logarithm:</span>
+                  <span id="readoutLogEquation" class="text-xs sm:text-sm font-mono font-bold text-amber-700 break-words whitespace-normal sm:text-right">
+                    -- (กดปุ่มคำนวณสมการเส้นตรงจาก logarithm)
                   </span>
                 </div>
               </div>
@@ -1508,9 +1584,9 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
           <!-- Main Equal-Loudness Chart (White Background + Black Font Text) -->
-          <div class="preserve-white-chart lg:col-span-9 bg-white rounded-2xl p-4 sm:p-5 border-2 border-purple-200/90 shadow-md space-y-3">
+          <div class="preserve-white-chart xl:col-span-9 bg-white rounded-2xl p-4 sm:p-5 border-2 border-purple-200/90 shadow-md space-y-3">
             <div class="flex flex-wrap items-center justify-between gap-2 text-xs">
               <span class="font-bold text-black tracking-tight">
                 Frequency Response / Equal-Loudness Contour (X: Log Frequency Hz, Y: Sound Level 0dB ถึง 90dB)
@@ -1533,7 +1609,7 @@
           </div>
 
           <!-- Saved Curves List -->
-          <div class="lg:col-span-3 glass-subpanel rounded-xl p-4 flex flex-col justify-between space-y-4">
+          <div class="xl:col-span-3 glass-subpanel rounded-xl p-4 flex flex-col justify-between space-y-4">
             <div class="space-y-3">
               <div class="text-xs font-bold text-purple-950 border-b border-purple-200 pb-2 flex items-center justify-between">
                 <span>เส้นกราฟที่บันทึกไว้ (Saved Curves)</span>
@@ -1758,8 +1834,10 @@
       autoRecordTimer: null,
       autoRecordIntervalSec: 0,
       hasStoppedAutoPlot: false,
+      isAnalysisMenuOpen: false,
       showLinearEquation: false,
-      showRSquare: false
+      showRSquare: false,
+      showLogEquation: false
     };
 
     // Cached DOM References & Dirty-Checked DOM Setters (Prevents Layout Thrashing)
@@ -3687,6 +3765,54 @@
       return { valid: true, m, c, r2, equation, r2Text };
     }
 
+    // Logarithmic Regression: Linear equation from logarithm (y = m·ln(x) + c)
+    function computeLogarithmicRegression(points) {
+      const validPts = (points || []).filter((p) => p.x > 0 && isFinite(p.x) && isFinite(p.y));
+      const n = validPts.length;
+      if (n < 2) {
+        return { valid: false, m: 0, c: 0, r2: 0, equation: '', r2Text: '' };
+      }
+
+      const logPoints = validPts.map((p) => ({ x: Math.log(p.x), y: p.y }));
+      const res = computeLinearRegressionAndR2(logPoints);
+      if (!res.valid) {
+        return { valid: false, m: 0, c: 0, r2: 0, equation: '', r2Text: '' };
+      }
+
+      const mFormatted = Math.abs(res.m) > 0 && Math.abs(res.m) < 0.01 ? res.m.toFixed(4) : res.m.toFixed(3);
+      const cFormatted = Math.abs(res.c).toFixed(2);
+      const signC = res.c >= 0 ? '+' : '-';
+      const equation = `y = ${mFormatted}·ln(x) ${signC} ${cFormatted}`;
+      const r2Text = `R²(ln) = ${res.r2.toFixed(4)}`;
+
+      return {
+        valid: true,
+        m: res.m,
+        c: res.c,
+        r2: res.r2,
+        equation,
+        r2Text
+      };
+    }
+
+    function toggleAnalysisButtonsMenu() {
+      const drawer = document.getElementById('analysisButtonsDrawer');
+      const btn = document.getElementById('btnAnalysisMenuToggle');
+      const chevron = document.getElementById('iconAnalysisMenuChevron');
+      if (!drawer) return;
+
+      analyzerState.isAnalysisMenuOpen = !analyzerState.isAnalysisMenuOpen;
+      if (analyzerState.isAnalysisMenuOpen) {
+        drawer.classList.remove('hidden');
+        if (btn) btn.setAttribute('aria-expanded', 'true');
+        if (chevron) chevron.classList.add('rotate-180');
+      } else {
+        drawer.classList.add('hidden');
+        if (btn) btn.setAttribute('aria-expanded', 'false');
+        if (chevron) chevron.classList.remove('rotate-180');
+      }
+    }
+
     function getChartModeRegressionPoints(mode, rows) {
       if (!rows || rows.length === 0) {
         return { points: [], axisHint: 'X: ลำดับการทดลอง (x), Y: ค่าที่วัดได้ (y)', label: 'Trendline' };
@@ -3730,20 +3856,25 @@
     function updateRegressionAndRSquareUI() {
       const btnEq = document.getElementById('btnCalcLinearEq');
       const btnR2 = document.getElementById('btnCalcRSquare');
+      const btnLog = document.getElementById('btnCalcLogEq');
       const eqEl = document.getElementById('readoutLinearEquation');
       const r2El = document.getElementById('readoutRSquareValue');
+      const logEl = document.getElementById('readoutLogEquation');
       const hintEl = document.getElementById('regressionAxisHint');
 
       const activeBtnCls =
-        'flex-1 sm:flex-none px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-700 shadow-sm transition-all whitespace-nowrap';
+        'w-full px-3 py-2 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-700 shadow-sm transition-all text-center';
       const inactiveBtnCls =
-        'flex-1 sm:flex-none px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-white hover:bg-purple-50 text-purple-900 border border-purple-300 shadow-sm transition-all whitespace-nowrap';
+        'w-full px-3 py-2 rounded-lg text-xs font-bold bg-white hover:bg-purple-50 text-purple-900 border border-purple-300 shadow-sm transition-all text-center';
 
       if (btnEq) {
         btnEq.className = analyzerState.showLinearEquation ? activeBtnCls : inactiveBtnCls;
       }
       if (btnR2) {
         btnR2.className = analyzerState.showRSquare ? activeBtnCls : inactiveBtnCls;
+      }
+      if (btnLog) {
+        btnLog.className = analyzerState.showLogEquation ? activeBtnCls : inactiveBtnCls;
       }
 
       const modeEl = document.getElementById('selectAnalyzerChartMode');
@@ -3760,9 +3891,14 @@
         ? computeLinearRegressionAndR2(regInfo.secondaryPoints)
         : null;
 
+      const primaryLogReg = computeLogarithmicRegression(regInfo.points);
+      const secondaryLogReg = regInfo.secondaryPoints
+        ? computeLogarithmicRegression(regInfo.secondaryPoints)
+        : null;
+
       if (eqEl) {
         if (!analyzerState.showLinearEquation) {
-          eqEl.textContent = '-- (กดปุ่มคำนวณสมการเส้นตรง)';
+          eqEl.textContent = '-- (กดปุ่มคำนวณค่าสมการเส้นตรง)';
           eqEl.className = 'text-xs sm:text-sm font-mono font-medium text-slate-400 break-words whitespace-normal sm:text-right';
         } else if (!primaryReg.valid) {
           eqEl.textContent = 'ต้องมีข้อมูลอย่างน้อย 2 รายการ';
@@ -3796,7 +3932,25 @@
         }
       }
 
-      return { primaryReg, secondaryReg, regInfo };
+      if (logEl) {
+        if (!analyzerState.showLogEquation) {
+          logEl.textContent = '-- (กดปุ่มคำนวณสมการเส้นตรงจาก logarithm)';
+          logEl.className = 'text-xs sm:text-sm font-mono font-medium text-slate-400 break-words whitespace-normal sm:text-right';
+        } else if (!primaryLogReg.valid) {
+          logEl.textContent = 'ต้องมีข้อมูลอย่างน้อย 2 รายการ';
+          logEl.className = 'text-xs sm:text-sm font-mono font-semibold text-amber-700 break-words whitespace-normal sm:text-right';
+        } else {
+          const logStr =
+            secondaryLogReg && secondaryLogReg.valid
+              ? `Peak: ${primaryLogReg.equation} | ${regInfo.secondaryLabel}: ${secondaryLogReg.equation}`
+              : `${primaryLogReg.equation} (${primaryLogReg.r2Text})`;
+          logEl.textContent = logStr;
+          logEl.title = logStr;
+          logEl.className = 'text-xs sm:text-sm font-mono font-bold text-amber-700 break-words whitespace-normal sm:text-right';
+        }
+      }
+
+      return { primaryReg, secondaryReg, primaryLogReg, secondaryLogReg, regInfo };
     }
 
     function toggleCalculateLinearEquation() {
@@ -3809,6 +3963,11 @@
       updateRegressionAndRSquareUI();
     }
 
+    function toggleCalculateLogEquation() {
+      analyzerState.showLogEquation = !analyzerState.showLogEquation;
+      updateAnalyzerCustomChart(true);
+    }
+
     function updateAnalyzerCustomChart(forceRecreate = false) {
       const canvas = document.getElementById('analyzerCustomChart');
       if (!canvas) return;
@@ -3818,7 +3977,7 @@
       const rows = analyzerState.recordedRows;
       const labels = rows.map((r) => r.label);
 
-      const { primaryReg, regInfo } = updateRegressionAndRSquareUI();
+      const { primaryReg, primaryLogReg, regInfo } = updateRegressionAndRSquareUI();
 
       let chartType = 'line';
       let chartData = { labels, datasets: [] };
@@ -3994,6 +4153,50 @@
             borderDash: [6, 4],
             pointRadius: 2,
             tension: 0
+          });
+        }
+      }
+
+      // Overlay Logarithmic Regression Trendline (y = m·ln(x) + c) on the chart when enabled
+      if (analyzerState.showLogEquation && primaryLogReg && primaryLogReg.valid) {
+        if (mode === 'scatter_freq_db') {
+          const xs = rows.map((r) => r.hz).filter((x) => x > 0);
+          const minX = Math.min(...xs);
+          const maxX = Math.max(...xs);
+          const stepCount = 24;
+          const logCurvePts = [];
+          for (let s = 0; s <= stepCount; s++) {
+            const xVal = minX + ((maxX - minX) * s) / stepCount;
+            if (xVal > 0) {
+              logCurvePts.push({
+                x: Number(xVal.toFixed(1)),
+                y: Number((primaryLogReg.m * Math.log(xVal) + primaryLogReg.c).toFixed(2))
+              });
+            }
+          }
+          chartData.datasets.push({
+            type: 'line',
+            label: `Logarithm: ${primaryLogReg.equation}`,
+            data: logCurvePts,
+            borderColor: '#0284c7',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            borderDash: [4, 3],
+            pointRadius: 0,
+            tension: 0.25
+          });
+        } else {
+          chartData.datasets.push({
+            type: 'line',
+            label: `Logarithm: ${primaryLogReg.equation}`,
+            data: rows.map((_, idx) => Number((primaryLogReg.m * Math.log(idx + 1) + primaryLogReg.c).toFixed(2))),
+            yAxisID: 'y',
+            borderColor: '#0284c7',
+            backgroundColor: 'transparent',
+            borderWidth: 2,
+            borderDash: [4, 3],
+            pointRadius: 2,
+            tension: 0.25
           });
         }
       }
@@ -4993,9 +5196,9 @@
       if (badgeEl) badgeEl.textContent = isDark ? 'Deep Purple Dark' : 'Soft Lavender DSP';
 
       const activeOptCls =
-        'w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all bg-purple-700 text-white shadow-sm text-left';
+        'theme-black-text w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all bg-purple-300/90 border border-purple-400 shadow-sm text-left';
       const inactiveOptCls =
-        'w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all hover:bg-purple-100/80 text-purple-950 text-left';
+        'theme-black-text w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all hover:bg-purple-200/70 border border-transparent text-left';
 
       if (btnLight) btnLight.className = !isDark ? activeOptCls : inactiveOptCls;
       if (btnDark) btnDark.className = isDark ? activeOptCls : inactiveOptCls;
